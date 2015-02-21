@@ -49,7 +49,7 @@ setup(
         'six',
         'zope.component',
         'zope.interface',
-        'zope.i18nmessageid'
+        'zope.i18nmessageid',
         'zope.security',
         'nti.common',
         'nti.nose_traceback_info',
