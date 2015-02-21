@@ -15,15 +15,15 @@ from hamcrest import has_property
 
 import time
 import datetime
-import unittest
+from unittest import TestCase
 
-import nti.ntiids.ntiids as ntiids
+from nti.ntiids import ntiids
 
 from nti.ntiids import interfaces
 
 from nti.testing.matchers import verifiably_provides
 
-class TestNTIIDS(unittest.TestCase):
+class TestNTIIDS(TestCase):
 
 	def test_make_ntiid( self ):
 		self.assertRaises( ValueError, ntiids.make_ntiid )

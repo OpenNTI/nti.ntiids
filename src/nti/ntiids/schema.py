@@ -19,9 +19,9 @@ class ValidNTIID(ValidURI):
 	"""
 	A schema field that checks that the value is a correctly
 	formed NTIID. (This does not perform any validation that the
-	value is actually reachable or accessibly in a library or
-	catalog.)
+	value is actually reachable or accessibly in a library or catalog.)
 	"""
+
 	_type = unicode
 
 	def fromUnicode(self, value):

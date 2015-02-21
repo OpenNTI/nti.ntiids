@@ -16,13 +16,12 @@ from dolmen.builtins import ITuple
 
 from nti.schema.field import TextLine
 	
-class INTIID(ITuple,sequence.IMinimalSequence):
+class INTIID(ITuple, sequence.IMinimalSequence):
 	"""
 	Represents the parts of an NTIID that has been parsed.
 
 	In addition to the named fields, this object acts as a 4-tuple,
 	(provider, type, specific, date)
-
 	"""
 	provider = TextLine(title="The username of the creating/providing entity.")
 	nttype = TextLine(title="The type of the NTIID.")
@@ -40,5 +39,5 @@ class INTIIDResolver(interface.Interface):
 	def resolve( ntiid_string ):
 		"""
 		:return: The object to which the `ntiid_string` refers,
-			or None if it cannot be found.
+				 or None if it cannot be found.
 		"""

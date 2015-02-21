@@ -114,7 +114,7 @@ def validate_ntiid_string( string ):
 	"""
 	__traceback_info__ = string,
 	try:
-		string = string if isinstance(string,six.text_type) else string.decode( 'utf-8' ) # cannot decode unicode
+		string = string if isinstance(string, six.text_type) else string.decode( 'utf-8' ) # cannot decode unicode
 	except (AttributeError,TypeError):
 		raise InvalidNTIIDError( "Not a string " + repr(string) )
 	except (UnicodeDecodeError,):
