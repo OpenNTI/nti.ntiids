@@ -50,7 +50,7 @@ setup(
         'zope.security',
         'nti.common',
         'nti.nose_traceback_info',
-        'nti.schema',
+        'nti.schema'
 	],
     extras_require={
         'test': TESTS_REQUIRE,
