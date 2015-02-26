@@ -15,7 +15,8 @@ TESTS_REQUIRE = [
     'nose-progressive',
     'nose2[coverage_plugin]',
     'pyhamcrest',
-    'nti.testing'
+    'nti.nose_traceback_info',
+    'nti.testing',
 ]
 
 setup(
@@ -49,7 +50,6 @@ setup(
         'zope.i18nmessageid',
         'zope.security',
         'nti.common',
-        'nti.nose_traceback_info',
         'nti.schema'
 	],
     extras_require={
