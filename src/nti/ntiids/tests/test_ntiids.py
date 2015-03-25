@@ -29,16 +29,25 @@ class TestNTIIDS(TestCase):
 		self.assertRaises( ValueError, ntiids.make_ntiid )
 		self.assertRaises( ValueError, ntiids.make_ntiid, provider='foo', specific='baz' )
 		iso_now = datetime.date( *time.gmtime()[:3] ).isoformat()
+
 		assert_that( ntiids.make_ntiid( date=None, nttype='Test' ),
 					 is_( 'tag:nextthought.com,%s:Test' % iso_now ) )
+		
 		assert_that( ntiids.make_ntiid( date=0, nttype='Test' ),
 					 is_( 'tag:nextthought.com,%s:Test' % iso_now ) )
 
 		assert_that( ntiids.make_ntiid( date=None, nttype='Test', provider='TestP' ),
 					 is_( 'tag:nextthought.com,%s:TestP-Test' % iso_now ) )
+		
 		assert_that( ntiids.make_ntiid( date=None, nttype='Test', provider='TestP', specific='Bar' ),
 					 is_( 'tag:nextthought.com,%s:TestP-Test-Bar' % iso_now ) )
-
+		
+		assert_that( ntiids.make_ntiid( date=None,
+										nttype='Test',
+										provider=u'Henry Beach Needham . McClure\u2019s Magazine',
+										specific='Bar' ),
+					 is_( 'tag:nextthought.com,%s:Henry_Beach_Needham_._McClures_Magazine-Test-Bar' % iso_now ) )
+		
 	def test_parse_ntiid( self ):
 		ntiid = ntiids.get_parts( ntiids.ROOT )
 		assert_that( ntiid, verifiably_provides( interfaces.INTIID ) )

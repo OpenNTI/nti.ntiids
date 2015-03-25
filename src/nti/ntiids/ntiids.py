@@ -287,7 +287,15 @@ def make_ntiid( date=DATE, provider=None, nttype=None, specific=None, base=None 
 	base_parts = get_parts( base )
 
 	# TODO: This is not a reversible transformation. Who should do this?
-	provider = escape_provider( str(provider) ) + '-' if provider else (base_parts.provider + '-' if base_parts.provider else '')
+	if provider:
+		if isinstance(provider, six.string_types):
+			provider = provider.encode('ascii', 'ignore')
+		else:
+			provider = str(provider)
+		provider = escape_provider(provider) +  '-'
+	else:
+		provider = (base_parts.provider + '-' if base_parts.provider else '')
+	
 	specific = '-' + specific if specific else ('-' + base_parts.specific if base_parts.specific else '')
 	nttype = nttype or base_parts.nttype
 
