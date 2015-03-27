@@ -13,6 +13,7 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import re
 import six
 import time
 import string
@@ -97,6 +98,7 @@ TYPE_TRANSCRIPT_SUMMARY = 'TranscriptSummary'
 # delimiter (forward or backward slash) is allowed as ntiids often
 # wind up as filenames, and that would break many filename uses
 _illegal_chars_ = r"/\";=?<>#%'{}|^[]"
+_illegal_chars_pattern = r"[/\";=?<>#%'{}|^\[\]]"
 
 class InvalidNTIIDError(ValidationError):
 	"""Raised if the NTIID value (or some part of it) is invalid."""
@@ -105,6 +107,8 @@ class ImpossibleToMakeSpecificPartSafe(InvalidNTIIDError):
 	"""The supplied value cannot be used safely."""
 
 	i18n_message = _("The value you have used is not valid.")
+
+ImpossibleToMakeProviderPartSafe = ImpossibleToMakeSpecificPartSafe
 
 def validate_ntiid_string( string ):
 	"""
@@ -115,7 +119,7 @@ def validate_ntiid_string( string ):
 	__traceback_info__ = string,
 	try:
 		string = string if isinstance(string, six.text_type) else string.decode( 'utf-8' ) # cannot decode unicode
-	except (AttributeError,TypeError):
+	except (AttributeError, TypeError):
 		raise InvalidNTIIDError( "Not a string " + repr(string) )
 	except (UnicodeDecodeError,):
 		raise InvalidNTIIDError( "String contains non-utf-8 values " + repr(string) )
@@ -188,6 +192,17 @@ def escape_provider( provider ):
 		return provider.replace( ' ', '_' ).replace( '-', '_' )
 	except AttributeError:
 		return provider
+
+def make_provider_safe( provider ):
+	"""
+	Given a potential provider part, transform it so that it is valid
+	as part of an NTIID string. 
+
+	.. caution:: This is not a reversible transformation.
+	"""
+	provider = re.sub(_illegal_chars_pattern, '_', provider)
+	provider = escape_provider(provider)
+	return provider
 
 # TODO: A function to "escape" the local/specific part. Unfortunately, it's
 # non-reversible so its less an escape and more a permutation.

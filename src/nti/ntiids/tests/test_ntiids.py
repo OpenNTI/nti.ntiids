@@ -76,7 +76,6 @@ class TestNTIIDS(TestCase):
 		assert_that( ntiids.make_specific_safe( '-Foo%Bar, +baz:?', strict=False ),
 					 is_( '_Foo_Bar,_+baz:_' ) )
 
-
 		# too short
 		assert_that( calling(ntiids.make_specific_safe).with_args(''),
 					 raises(ntiids.ImpossibleToMakeSpecificPartSafe))
@@ -86,3 +85,6 @@ class TestNTIIDS(TestCase):
 
 		assert_that( calling(ntiids.make_specific_safe).with_args('Алибра школа'),
 					 raises(ntiids.ImpossibleToMakeSpecificPartSafe))
+
+		assert_that( ntiids.make_provider_safe('NSF/[Science]Nation?' ),
+					 is_( 'NSF__Science_Nation_' ) )
