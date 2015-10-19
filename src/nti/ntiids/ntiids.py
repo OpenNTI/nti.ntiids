@@ -22,8 +22,9 @@ import datetime
 import warnings
 import collections
 
-from zope import interface
 from zope import component
+from zope import interface
+
 from zope.schema.interfaces import ValidationError
 
 from .interfaces import INTIID

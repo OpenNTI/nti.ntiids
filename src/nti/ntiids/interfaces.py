@@ -10,13 +10,14 @@ from __future__ import print_function, unicode_literals, absolute_import, divisi
 __docformat__ = "restructuredtext en"
 
 from zope import interface
-from zope.interface.common import sequence
+
+from zope.interface.common.sequence import IMinimalSequence
 
 from dolmen.builtins import ITuple
 
 from nti.schema.field import TextLine
-	
-class INTIID(ITuple, sequence.IMinimalSequence):
+
+class INTIID(ITuple, IMinimalSequence):
 	"""
 	Represents the parts of an NTIID that has been parsed.
 
@@ -36,7 +37,7 @@ class INTIIDResolver(interface.Interface):
 	These should be registered as components named for the ntiid type (e.g, OID).
 	"""
 
-	def resolve( ntiid_string ):
+	def resolve(ntiid_string):
 		"""
 		:return: The object to which the `ntiid_string` refers,
 				 or None if it cannot be found.
