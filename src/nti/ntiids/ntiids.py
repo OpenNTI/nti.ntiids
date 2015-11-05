@@ -32,6 +32,7 @@ from .interfaces import INTIIDResolver
 
 # Well-known IDs
 DATE = "2011-10"
+
 #: When NTIIDs (usually of a particular type) are arranged into
 #: a tree, or a forest of trees, this NTIID specifies the conceptual
 #: root of the entire tree or forest.
@@ -73,7 +74,7 @@ TYPE_NAMED_ENTITY_USER = TYPE_NAMED_ENTITY + ':User'
 #: Subtype of named entities identifying a particular community
 TYPE_NAMED_ENTITY_COMMUNITY = TYPE_NAMED_ENTITY + ':Community'
 
-TYPE_ROOM = 'MeetingRoom' #: AKA an extant "chat" session
+TYPE_ROOM = 'MeetingRoom'  #: AKA an extant "chat" session
 TYPE_MEETINGROOM = TYPE_ROOM
 
 TYPE_HTML = 'HTML'
@@ -84,7 +85,8 @@ TYPE_CLASS_SECTION = 'ClassSection'
 
 TYPE_MEETINGROOM_GROUP = TYPE_ROOM + ':Group'
 TYPE_MEETINGROOM_CLASS = TYPE_ROOM + ':Class'
-TYPE_MEETINGROOM_SECT  = TYPE_ROOM + ':ClassSection'
+TYPE_MEETINGROOM_SECT = TYPE_ROOM + ':ClassSection'
+
 #: Transcripts and TranscriptSummaries. Note that
 #: they are not subtypes of a common type because they
 #: contain quite different information and are used
@@ -111,7 +113,7 @@ class ImpossibleToMakeSpecificPartSafe(InvalidNTIIDError):
 
 ImpossibleToMakeProviderPartSafe = ImpossibleToMakeSpecificPartSafe
 
-def validate_ntiid_string( string ):
+def validate_ntiid_string(string):
 	"""
 	Ensures the string is a valid NTIID, else raises :class:`InvalidNTIIDError`.
 
@@ -119,37 +121,37 @@ def validate_ntiid_string( string ):
 	"""
 	__traceback_info__ = string,
 	try:
-		string = string if isinstance(string, six.text_type) else string.decode( 'utf-8' ) # cannot decode unicode
+		string = string if isinstance(string, six.text_type) else string.decode('utf-8')  # cannot decode unicode
 	except (AttributeError, TypeError):
-		raise InvalidNTIIDError( "Not a string " + repr(string) )
+		raise InvalidNTIIDError("Not a string " + repr(string))
 	except (UnicodeDecodeError,):
-		raise InvalidNTIIDError( "String contains non-utf-8 values " + repr(string) )
+		raise InvalidNTIIDError("String contains non-utf-8 values " + repr(string))
 
-	if not string or not string.startswith( 'tag:nextthought.com,20' ):
-		raise InvalidNTIIDError( 'Missing correct start value: ' + repr(string) )
+	if not string or not string.startswith('tag:nextthought.com,20'):
+		raise InvalidNTIIDError('Missing correct start value: ' + repr(string))
 
-	parts = string.split( ':', 2 ) # Split twice. Allow for : in the specific part
-	if len( parts ) != 3:
-		raise InvalidNTIIDError( 'Wrong number of colons: ' + string )
+	parts = string.split(':', 2)  # Split twice. Allow for : in the specific part
+	if len(parts) != 3:
+		raise InvalidNTIIDError('Wrong number of colons: ' + string)
 
-	if len( parts[2].split( '-' ) ) > 3:
-		raise InvalidNTIIDError( 'Wrong number of dashes: ' + string )
+	if len(parts[2].split('-')) > 3:
+		raise InvalidNTIIDError('Wrong number of dashes: ' + string)
 
 	for char in _illegal_chars_:
 		if char in string:
-			raise InvalidNTIIDError( 'Contains illegal char ' + repr(char) )
+			raise InvalidNTIIDError('Contains illegal char ' + repr(char))
 	return string
 
-validate_ntiid_string( ROOT )
+validate_ntiid_string(ROOT)
 
-def is_valid_ntiid_string( string ):
+def is_valid_ntiid_string(string):
 	try:
-		validate_ntiid_string( string )
+		validate_ntiid_string(string)
 		return True
 	except InvalidNTIIDError:
 		return False
 
-def is_ntiid_of_type( ntiid, nttype ):
+def is_ntiid_of_type(ntiid, nttype):
 	"""
 	Check if the given ``ntiid`` is valid and of the given type
 	(ignoring subtypes).
@@ -158,9 +160,9 @@ def is_ntiid_of_type( ntiid, nttype ):
 		portion equivalent to the given nttype (i.e., ignoring
 		subtypes).
 	"""
-	return nttype and is_ntiid_of_types( ntiid, (nttype,) )
+	return nttype and is_ntiid_of_types(ntiid, (nttype,))
 
-def is_ntiid_of_types( ntiid, nttypes ):
+def is_ntiid_of_types(ntiid, nttypes):
 	"""
 	Check if the given ``ntiid`` is valid and of one of the given types
 	(ignoring subtypes).
@@ -173,13 +175,13 @@ def is_ntiid_of_types( ntiid, nttypes ):
 		subtypes).
 	"""
 
-	the_type = get_type( ntiid )
-	if the_type: # strip subtypes
+	the_type = get_type(ntiid)
+	if the_type:  # strip subtypes
 		the_type = the_type.split(':', 2)[0]
 		if the_type in nttypes:
 			return the_type
 
-def escape_provider( provider ):
+def escape_provider(provider):
 	"""
 	Makes a provider name safe for use in an NTIID by escaping
 	characters not safe for a URL, such as _ and ' '. When
@@ -190,14 +192,14 @@ def escape_provider( provider ):
 
 	"""
 	try:
-		return provider.replace( ' ', '_' ).replace( '-', '_' )
+		return provider.replace(' ', '_').replace('-', '_')
 	except AttributeError:
 		return provider
 
-def make_provider_safe( provider ):
+def make_provider_safe(provider):
 	"""
 	Given a potential provider part, transform it so that it is valid
-	as part of an NTIID string. 
+	as part of an NTIID string.
 
 	.. caution:: This is not a reversible transformation.
 	"""
@@ -219,15 +221,15 @@ def make_provider_safe( provider ):
 _sp_repl_byte = b'_'
 
 _sp_strict_allowed = string.ascii_letters + string.digits
-_sp_strict_removed = b''.join( [chr(x) for x in range(0,256) if chr(x) not in _sp_strict_allowed] )
-_sp_strict_transtable = string.maketrans( _sp_strict_removed, _sp_repl_byte * len(_sp_strict_removed) )
+_sp_strict_removed = b''.join([chr(x) for x in range(0, 256) if chr(x) not in _sp_strict_allowed])
+_sp_strict_transtable = string.maketrans(_sp_strict_removed, _sp_repl_byte * len(_sp_strict_removed))
 
 # lax allows all non-control characters that are non-whitespace printable and not defined to be illegal
-_sp_lax_allowed = [chr(x) for x in range(33,128) if chr(x) not in (_illegal_chars_ + '-')]
-_sp_lax_removed = b''.join( [chr(x) for x in range(0,256) if chr(x) not in _sp_lax_allowed] )
-_sp_lax_transtable = string.maketrans( _sp_lax_removed, _sp_repl_byte * len(_sp_lax_removed) )
+_sp_lax_allowed = [chr(x) for x in range(33, 128) if chr(x) not in (_illegal_chars_ + '-')]
+_sp_lax_removed = b''.join([chr(x) for x in range(0, 256) if chr(x) not in _sp_lax_allowed])
+_sp_lax_transtable = string.maketrans(_sp_lax_removed, _sp_repl_byte * len(_sp_lax_removed))
 
-def make_specific_safe( specific, strict=True ):
+def make_specific_safe(specific, strict=True):
 	"""
 	Given a potential specific part, transform it so that it is valid
 	as part of an NTIID string. This includes removing disallowed characters,
@@ -253,15 +255,15 @@ def make_specific_safe( specific, strict=True ):
 		specific = specific.encode('ascii', 'ignore')
 
 	table = _sp_strict_transtable if strict else _sp_lax_transtable
-	specific = string.translate( specific, table )
+	specific = string.translate(specific, table)
 
 	if not specific or set(specific) == set(_sp_repl_byte):
 		raise ImpossibleToMakeSpecificPartSafe(specific)
 
 	# back to unicode, coming from ascii
-	return specific.decode( 'ascii' )
+	return specific.decode('ascii')
 
-def make_ntiid( date=DATE, provider=None, nttype=None, specific=None, base=None ):
+def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
 	"""
 	Create a new NTIID.
 
@@ -276,31 +278,31 @@ def make_ntiid( date=DATE, provider=None, nttype=None, specific=None, base=None 
 	:return: A new NTIID string formatted as of the given date.
 	"""
 
-	if base is not None and not is_valid_ntiid_string( base ):
+	if base is not None and not is_valid_ntiid_string(base):
 		base = None
 
 	if not nttype and not base:
-		raise ValueError( 'Must supply type' )
+		raise ValueError('Must supply type')
 
 	date_string = None
 	if date is DATE and base is not None:
 		date_string = get_parts(base).date
-	elif isinstance( date, six.string_types ):
+	elif isinstance(date, six.string_types):
 		date_string = date
 	else:
 		# Account for 0/None
-		date_seconds = date if isinstance( date, numbers.Real ) and date > 0 else time.time()
+		date_seconds = date if isinstance(date, numbers.Real) and date > 0 else time.time()
 
 		# Always get the date in UTC/GMT by converting the epoch into a GMT tuple.
 		# Then turn into a date object since that's the easiest way to get ISO format.
-		date = datetime.date( *time.gmtime(date_seconds)[0:3] )
+		date = datetime.date(*time.gmtime(date_seconds)[0:3])
 		date_string = date.isoformat()
 
 	if date_string is None:
 		__traceback_info__ = date, base
-		raise ValueError( "Unable to derive date string" )
+		raise ValueError("Unable to derive date string")
 
-	base_parts = get_parts( base )
+	base_parts = get_parts(base)
 
 	# TODO: This is not a reversible transformation. Who should do this?
 	if provider:
@@ -308,67 +310,67 @@ def make_ntiid( date=DATE, provider=None, nttype=None, specific=None, base=None 
 			provider = provider.encode('ascii', 'ignore')
 		else:
 			provider = str(provider)
-		provider = escape_provider(provider) +  '-'
+		provider = escape_provider(provider) + '-'
 	else:
 		provider = (base_parts.provider + '-' if base_parts.provider else '')
-	
+
 	specific = '-' + specific if specific else ('-' + base_parts.specific if base_parts.specific else '')
 	nttype = nttype or base_parts.nttype
 
-	__traceback_info__ =  (date_string, provider, nttype, specific )
+	__traceback_info__ = (date_string, provider, nttype, specific)
 	result = 'tag:nextthought.com,%s:%s%s%s' % __traceback_info__
-	validate_ntiid_string( result )
+	validate_ntiid_string(result)
 	return result
 
-NTIID = collections.namedtuple( 'NTIID',
-								map(str, ['provider', 'nttype', 'specific','date']) )
-interface.classImplements( NTIID, INTIID )
+NTIID = collections.namedtuple('NTIID',
+								map(str, ['provider', 'nttype', 'specific', 'date']))
+interface.classImplements(NTIID, INTIID)
 
-def _parse( ntiid ):
+def _parse(ntiid):
 	"""
 	:return: 4-tuple (provider, type, specific, date)
 	"""
 	try:
-		validate_ntiid_string( ntiid )
-		_, tag_part, our_parts = ntiid.split( ':', 2 )
+		validate_ntiid_string(ntiid)
+		_, tag_part, our_parts = ntiid.split(':', 2)
 		date = tag_part.split(',')[-1]
-		our_parts = our_parts.split( '-' )
-		if len( our_parts ) == 1:
+		our_parts = our_parts.split('-')
+		if len(our_parts) == 1:
 			# only the type
 			return NTIID(None, our_parts[0], None, date)
-		if len( our_parts ) == 2:
+		if len(our_parts) == 2:
 			# type and type spec.
 			return NTIID(None, our_parts[0], our_parts[1], date)
-		return NTIID( our_parts[0], our_parts[1], our_parts[2], date )
-	except (InvalidNTIIDError,ValueError):
-		return NTIID(None,None,None,None)
+		return NTIID(our_parts[0], our_parts[1], our_parts[2], date)
+	except (InvalidNTIIDError, ValueError):
+		return NTIID(None, None, None, None)
 
-def get_provider( ntiid ):
+def get_provider(ntiid):
 	"""
 	:return: The string of the provider part of the ntiid if it could be parsed, else None.
 	"""
-	return _parse( ntiid ).provider
+	return _parse(ntiid).provider
 
-def get_type( ntiid ):
+def get_type(ntiid):
 	"""
 	:return: The string of the type part of the ntiid if it could be parsed, else None.
 	"""
-	return _parse( ntiid ).nttype
+	return _parse(ntiid).nttype
 
-def get_specific( ntiid ):
+def get_specific(ntiid):
 	"""
 	:return: The string of the type-specific part of the ntiid if it could be parsed, else None.
 	"""
-	return _parse( ntiid ).specific
+	return _parse(ntiid).specific
 
-def get_parts( ntiid ):
+def get_parts(ntiid):
 	"""
 	:return: An NTIID named four-tuple (provider, type, type-specific, date) if the ntiid could be parsed,
 		or named four-tuple of None.
 
 	EOD
 	"""
-	return _parse( ntiid )
+	return _parse(ntiid)
 
 def find_object_with_ntiid(key, **kwargs):
 	"""
@@ -381,15 +383,15 @@ def find_object_with_ntiid(key, **kwargs):
 	:return: The object found, or None if no object can be found or the ntiid passed is invalid.
 	"""
 
-	if not is_valid_ntiid_string( key ):
-		logger.warn( "Invalid ntiid string %s", key )
+	if not is_valid_ntiid_string(key):
+		logger.warn("Invalid ntiid string %s", key)
 		return None
 	if kwargs:
-		warnings.warn( "Function currently takes no kwargs" )
+		warnings.warn("Function currently takes no kwargs")
 
-	ntiid = _parse( key )
-	resolver = component.queryUtility(INTIIDResolver, name=ntiid.nttype )
+	ntiid = _parse(key)
+	resolver = component.queryUtility(INTIIDResolver, name=ntiid.nttype)
 	if not resolver:
-		logger.warn( "No ntiid resolver for '%s' in '%s'", ntiid.nttype, key )
+		logger.warn("No ntiid resolver for '%s' in '%s'", ntiid.nttype, key)
 		return None
-	return resolver.resolve( key )
+	return resolver.resolve(key)
