@@ -394,4 +394,6 @@ def find_object_with_ntiid(key, **kwargs):
 	if not resolver:
 		logger.warn("No ntiid resolver for '%s' in '%s'", ntiid.nttype, key)
 		return None
-	return resolver.resolve(key)
+	result = resolver.resolve(key)
+	return result
+
