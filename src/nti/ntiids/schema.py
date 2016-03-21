@@ -11,9 +11,9 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from nti.schema.field import ValidURI
+from nti.ntiids.ntiids import validate_ntiid_string
 
-from .ntiids import validate_ntiid_string
+from nti.schema.field import ValidURI
 
 class ValidNTIID(ValidURI):
 	"""

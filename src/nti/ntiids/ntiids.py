@@ -11,8 +11,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from . import MessageFactory as _
-
 import re
 import six
 import time
@@ -27,8 +25,10 @@ from zope import interface
 
 from zope.schema.interfaces import ValidationError
 
-from .interfaces import INTIID
-from .interfaces import INTIIDResolver
+from nti.ntiids import MessageFactory as _
+
+from nti.ntiids.interfaces import INTIID
+from nti.ntiids.interfaces import INTIIDResolver
 
 # Well-known IDs
 DATE = "2011-10"
@@ -104,10 +104,14 @@ _illegal_chars_ = r"/\";=?<>#%'{}|^[]"
 _illegal_chars_pattern = r"[/\";=?<>#%'{}|^\[\]]"
 
 class InvalidNTIIDError(ValidationError):
-	"""Raised if the NTIID value (or some part of it) is invalid."""
+	"""
+	Raised if the NTIID value (or some part of it) is invalid.
+	"""
 
 class ImpossibleToMakeSpecificPartSafe(InvalidNTIIDError):
-	"""The supplied value cannot be used safely."""
+	"""
+	The supplied value cannot be used safely.
+	"""
 
 	i18n_message = _("The value you have used is not valid.")
 
@@ -396,4 +400,3 @@ def find_object_with_ntiid(key, **kwargs):
 		return None
 	result = resolver.resolve(key)
 	return result
-
