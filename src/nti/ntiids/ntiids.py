@@ -39,7 +39,7 @@ TAG_NTC = 'tag:nextthought.com'
 #: When NTIIDs (usually of a particular type) are arranged into
 #: a tree, or a forest of trees, this NTIID specifies the conceptual
 #: root of the entire tree or forest.
-ROOT = "%s,2011-10:Root" % TAG_NTC
+ROOT = "%s,%s:Root" % (TAG_NTC, DATE)
 
 #: Used as an opaque identifier to a specific object. This will
 #: not incorporate the object's name or path (when those concepts make
