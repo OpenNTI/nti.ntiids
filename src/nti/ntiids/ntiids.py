@@ -33,10 +33,13 @@ from nti.ntiids.interfaces import INTIIDResolver
 # Well-known IDs
 DATE = "2011-10"
 
+#: prefix of NTIIDs
+TAG_NTC = 'tag:nextthought.com'
+
 #: When NTIIDs (usually of a particular type) are arranged into
 #: a tree, or a forest of trees, this NTIID specifies the conceptual
 #: root of the entire tree or forest.
-ROOT = "tag:nextthought.com,2011-10:Root"
+ROOT = "%s,2011-10:Root" % TAG_NTC
 
 #: Used as an opaque identifier to a specific object. This will
 #: not incorporate the object's name or path (when those concepts make
