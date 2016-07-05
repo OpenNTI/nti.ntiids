@@ -399,7 +399,8 @@ def find_object_with_ntiid(key, **kwargs):
 	ntiid = _parse(key)
 	resolver = component.queryUtility(INTIIDResolver, name=ntiid.nttype)
 	if not resolver:
-		logger.warn("No ntiid resolver for '%s' in '%s'", ntiid.nttype, key)
+		if ntiid.type != TYPE_UUID:
+			logger.warn("No ntiid resolver for '%s' in '%s'", ntiid.nttype, key)
 		return None
 	result = resolver.resolve(key)
 	return result

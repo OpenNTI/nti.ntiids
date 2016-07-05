@@ -33,5 +33,5 @@ class ValidNTIID(ValidURI):
 		return value
 
 	def _validate(self, value):
-		super(ValidNTIID,self)._validate(value)
-		validate_ntiid_string( value )
+		super(ValidNTIID, self)._validate(value)
+		validate_ntiid_string(value)
