@@ -49,7 +49,6 @@ setup(
         'zope.interface',
         'zope.i18nmessageid',
         'zope.security',
-        'nti.common',
         'nti.schema'
 	],
     extras_require={
