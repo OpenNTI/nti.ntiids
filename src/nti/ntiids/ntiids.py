@@ -167,7 +167,7 @@ def is_ntiid_of_type(ntiid, nttype):
 		portion equivalent to the given nttype (i.e., ignoring
 		subtypes).
 	"""
-	return nttype and is_ntiid_of_types(ntiid, (nttype,))
+	return bool(nttype and is_ntiid_of_types(ntiid, (nttype,)))
 
 def is_ntiid_of_types(ntiid, nttypes):
 	"""
@@ -187,6 +187,7 @@ def is_ntiid_of_types(ntiid, nttypes):
 		the_type = the_type.split(':', 2)[0]
 		if the_type in nttypes:
 			return the_type
+	return None
 
 def escape_provider(provider):
 	"""
@@ -374,8 +375,6 @@ def get_parts(ntiid):
 	"""
 	:return: An NTIID named four-tuple (provider, type, type-specific, date) if the ntiid could be parsed,
 		or named four-tuple of None.
-
-	EOD
 	"""
 	return _parse(ntiid)
 
