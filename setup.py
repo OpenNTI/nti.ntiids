@@ -32,17 +32,17 @@ setup(
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-		'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
-	packages=find_packages('src'),
-	package_dir={'': 'src'},
-	namespace_packages=['nti'],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    namespace_packages=['nti'],
     tests_require=TESTS_REQUIRE,
-	install_requires=[
-		'setuptools',
+    install_requires=[
+        'setuptools',
         'dolmen.builtins',
         'six',
         'zope.component',
@@ -50,9 +50,9 @@ setup(
         'zope.i18nmessageid',
         'zope.security',
         'nti.schema'
-	],
+    ],
     extras_require={
         'test': TESTS_REQUIRE,
     },
-	entry_points=entry_points
+    entry_points=entry_points
 )

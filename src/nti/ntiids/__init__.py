@@ -11,3 +11,5 @@ logger = __import__('logging').getLogger(__name__)
 
 import zope.i18nmessageid
 MessageFactory = zope.i18nmessageid.MessageFactory('nti.ntiids')
+
+from nti.ntiids.ntiids import find_object_with_ntiid
