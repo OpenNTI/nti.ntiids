@@ -29,9 +29,9 @@ class TestNTIIDS(TestCase):
     def test_make_ntiid(self):
         self.assertRaises(ValueError, ntiids.make_ntiid)
         self.assertRaises(ValueError, 
-						  ntiids.make_ntiid, 
-						  provider='foo', 
-						  specific='baz')
+                          ntiids.make_ntiid, 
+                          provider='foo', 
+                          specific='baz')
         iso_now = datetime.date(*time.gmtime()[:3]).isoformat()
 
         assert_that(ntiids.make_ntiid(date=None, nttype='Test'),
