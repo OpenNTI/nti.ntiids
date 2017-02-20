@@ -13,6 +13,8 @@ from hamcrest import calling
 from hamcrest import assert_that
 from hamcrest import has_property
 
+from nti.testing.matchers import verifiably_provides
+
 import time
 import datetime
 from unittest import TestCase
@@ -21,10 +23,12 @@ from nti.ntiids import ntiids
 
 from nti.ntiids import interfaces
 
-from nti.testing.matchers import verifiably_provides
+from nti.ntiids.tests import SharedConfiguringTestLayer
 
 
 class TestNTIIDS(TestCase):
+
+    layer = SharedConfiguringTestLayer
 
     def test_make_ntiid(self):
         self.assertRaises(ValueError, ntiids.make_ntiid)
