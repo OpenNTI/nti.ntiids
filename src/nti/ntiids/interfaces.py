@@ -50,6 +50,7 @@ class INTIIDResolver(interface.Interface):
                  or None if it cannot be found.
         """
 
+
 class IWillUpdateNTIIDEvent(IObjectEvent):
     """
     An event that is sent when an ntiid for an object is about to change.
@@ -57,6 +58,7 @@ class IWillUpdateNTIIDEvent(IObjectEvent):
 
     old_ntiid = interface.Attribute("The previous ntiid")
     new_ntiid = interface.Attribute("The new ntiid")
+
 
 @interface.implementer(IWillUpdateNTIIDEvent)
 class WillUpdateNTIIDEvent(ObjectEvent):
