@@ -50,20 +50,37 @@ class INTIIDResolver(interface.Interface):
                  or None if it cannot be found.
         """
 
-
-class IWillUpdateNTIIDEvent(IObjectEvent):
-    """
-    An event that is sent when an ntiid for an object is about to change.
-    """
+class IUpdateNTIIDEvent(IObjectEvent):
 
     old_ntiid = interface.Attribute("The previous ntiid")
     new_ntiid = interface.Attribute("The new ntiid")
 
 
+class IWillUpdateNTIIDEvent(IUpdateNTIIDEvent):
+    """
+    An event that is sent when an ntiid for an object is about to change.
+    """
+
+
+class IUpdatedNTIIDEvent(IUpdateNTIIDEvent):
+    """
+    An event that is sent when an ntiid for an object has been changed.
+    """
+
+
 @interface.implementer(IWillUpdateNTIIDEvent)
-class WillUpdateNTIIDEvent(ObjectEvent):
+class AbstractUpdateNTIIDEvent(ObjectEvent):
 
     def __init__(self, obj, old_ntiid, new_ntiid):
-        super(WillUpdateNTIIDEvent, self).__init__(obj)
+        super(AbstractUpdateNTIIDEvent, self).__init__(obj)
         self.old_ntiid = old_ntiid
         self.new_ntiid = new_ntiid
+
+
+@interface.implementer(IWillUpdateNTIIDEvent)
+class WillUpdateNTIIDEvent(AbstractUpdateNTIIDEvent):
+    pass
+
+@interface.implementer(IUpdatedNTIIDEvent)
+class UpdatedNTIIDEvent(AbstractUpdateNTIIDEvent):
+    pass
