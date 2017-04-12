@@ -44,12 +44,12 @@ setup(
     install_requires=[
         'setuptools',
         'dolmen.builtins',
+        'nti.schema',
         'six',
         'zope.component',
         'zope.interface',
         'zope.i18nmessageid',
         'zope.security',
-        'nti.schema'
     ],
     extras_require={
         'test': TESTS_REQUIRE,

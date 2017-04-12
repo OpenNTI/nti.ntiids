@@ -77,18 +77,14 @@ TYPE_NAMED_ENTITY_USER = TYPE_NAMED_ENTITY + ':User'
 #: Subtype of named entities identifying a particular community
 TYPE_NAMED_ENTITY_COMMUNITY = TYPE_NAMED_ENTITY + ':Community'
 
-TYPE_ROOM = 'MeetingRoom'  #: AKA an extant "chat" session
+#: AKA an extant "chat" session
+TYPE_ROOM = 'MeetingRoom'  
 TYPE_MEETINGROOM = TYPE_ROOM
 
 TYPE_HTML = 'HTML'
 TYPE_QUIZ = 'Quiz'
 
-TYPE_CLASS = 'Class'
-TYPE_CLASS_SECTION = 'ClassSection'
-
 TYPE_MEETINGROOM_GROUP = TYPE_ROOM + ':Group'
-TYPE_MEETINGROOM_CLASS = TYPE_ROOM + ':Class'
-TYPE_MEETINGROOM_SECT = TYPE_ROOM + ':ClassSection'
 
 #: Transcripts and TranscriptSummaries. Note that
 #: they are not subtypes of a common type because they
