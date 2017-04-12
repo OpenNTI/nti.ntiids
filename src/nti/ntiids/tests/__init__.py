@@ -20,8 +20,6 @@ class SharedConfiguringTestLayer(GCLayerMixin,
                                  ZopeComponentLayer,
                                  ConfiguringLayerMixin):
 
-    set_up_packages = ('nti.ntiids',)
-
     @classmethod
     def setUp(cls):
         cls.setUpPackages()
