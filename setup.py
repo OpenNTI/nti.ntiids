@@ -49,6 +49,7 @@ setup(
         'zope.component',
         'zope.interface',
         'zope.i18nmessageid',
+        'zope.schema',
         'zope.security',
     ],
     extras_require={
