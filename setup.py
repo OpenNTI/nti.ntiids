@@ -7,11 +7,7 @@ entry_points = {
 }
 
 TESTS_REQUIRE = [
-    'fudge',
-    'nose2[coverage_plugin]',
     'nti.testing',
-    'pyhamcrest',
-    'z3c.baseregistry',
     'zope.testrunner',
 ]
 
@@ -27,17 +23,15 @@ setup(
     author='Jason Madden',
     author_email='jason@nextthought.com',
     description="NTI ntiids",
-    long_description=_read('README.rst'),
+    long_description=(_read('README.rst') + '\n\n' + _read('CHANGES.rst')),
     license='Apache',
-    keywords='NTIIDs',
+    keywords='ntiids',
     classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
@@ -49,17 +43,20 @@ setup(
     tests_require=TESTS_REQUIRE,
     install_requires=[
         'setuptools',
-        'dolmen.builtins',
         'nti.schema',
         'six',
         'zope.component',
         'zope.interface',
         'zope.i18nmessageid',
         'zope.schema',
-        'zope.security',
     ],
     extras_require={
         'test': TESTS_REQUIRE,
+        ':python_version == "2.7"': [
+            # Not ported to Py3
+            'dolmen.builtins',
+        ],
     },
     entry_points=entry_points,
+    test_suite="nti.ntiids.tests",
 )

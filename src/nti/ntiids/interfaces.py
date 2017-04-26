@@ -18,7 +18,19 @@ from zope.interface.common.sequence import IMinimalSequence
 from zope.interface.interfaces import ObjectEvent
 from zope.interface.interfaces import IObjectEvent
 
-from dolmen.builtins import ITuple
+try:
+    from dolmen.builtins import ITuple
+    from dolmen.builtins import IIterable
+except (ImportError, NameError):
+    
+    class IIterable(interface.Interface):
+        """Base interface for iterable types"""
+        def __iter__():
+            pass
+
+    class ITuple(IIterable):
+        """Marker interface for tuples"""
+    interface.classImplements(tuple, ITuple)
 
 from nti.schema.field import TextLine
 
@@ -30,10 +42,10 @@ class INTIID(ITuple, IMinimalSequence):
     In addition to the named fields, this object acts as a 4-tuple,
     (provider, type, specific, date)
     """
-    provider = TextLine(title="The username of the creating/providing entity.")
-    nttype = TextLine(title="The type of the NTIID.")
-    specific = TextLine(title="The type-specific portion of the NTIID.")
-    date = TextLine(title="The date portion of the NTIID.")
+    provider = TextLine(title=u"The username of the creating/providing entity.")
+    nttype = TextLine(title=u"The type of the NTIID.")
+    specific = TextLine(title=u"The type-specific portion of the NTIID.")
+    date = TextLine(title=u"The date portion of the NTIID.")
 
 
 class INTIIDResolver(interface.Interface):
@@ -80,6 +92,7 @@ class AbstractUpdateNTIIDEvent(ObjectEvent):
 @interface.implementer(IWillUpdateNTIIDEvent)
 class WillUpdateNTIIDEvent(AbstractUpdateNTIIDEvent):
     pass
+
 
 @interface.implementer(IUpdatedNTIIDEvent)
 class UpdatedNTIIDEvent(AbstractUpdateNTIIDEvent):

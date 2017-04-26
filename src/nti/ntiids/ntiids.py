@@ -234,13 +234,20 @@ def make_provider_safe(provider):
 # with no punctuation. There are some unicode characters that are dangerous
 # and used in attacks on certain platforms (not to mention being confusing)
 
+try:
+    maketrans = string.maketrans
+    translate = string.translate
+except AttributeError:
+    maketrans = str.maketrans
+    translate = str.translate
+
 _sp_repl_byte = b'_'
 
 _sp_strict_allowed = string.ascii_letters + string.digits
 _sp_strict_removed = b''.join([chr(x) for x in range(0, 256) 
-                               if chr(x) not in _sp_strict_allowed])
-_sp_strict_transtable = string.maketrans(_sp_strict_removed,
-                                        _sp_repl_byte * len(_sp_strict_removed))
+                              if chr(x) not in _sp_strict_allowed])
+_sp_strict_transtable = maketrans(_sp_strict_removed,
+                                  _sp_repl_byte * len(_sp_strict_removed))
 
 # lax allows all non-control characters that are non-whitespace printable
 # and not defined to be illegal
@@ -248,8 +255,8 @@ _sp_lax_allowed = [chr(x) for x in range(33, 128)
                    if chr(x) not in (_illegal_chars_ + '-')]
 _sp_lax_removed = b''.join([chr(x) for x in range(0, 256) 
                             if chr(x) not in _sp_lax_allowed])
-_sp_lax_transtable = string.maketrans(_sp_lax_removed,
-                                      _sp_repl_byte * len(_sp_lax_removed))
+_sp_lax_transtable = maketrans(_sp_lax_removed,
+                               _sp_repl_byte * len(_sp_lax_removed))
 
 
 def make_specific_safe(specific, strict=True):
@@ -279,7 +286,7 @@ def make_specific_safe(specific, strict=True):
         specific = specific.encode('ascii', 'ignore')
 
     table = _sp_strict_transtable if strict else _sp_lax_transtable
-    specific = string.translate(specific, table)
+    specific = translate(specific, table)
 
     if not specific or set(specific) == set(_sp_repl_byte):
         raise ImpossibleToMakeSpecificPartSafe(specific)
