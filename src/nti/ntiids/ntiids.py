@@ -3,10 +3,10 @@
 """
 Constants and types for dealing with our unique IDs.
 
-.. $Id$
+.. $Id: ntiids.py 111454 2017-04-26 03:04:41Z carlos.sanchez $
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -206,8 +206,8 @@ def escape_provider(provider):
 
     """
     try:
-        return provider.replace(' ', '_').replace('-', '_')
-    except AttributeError:
+        return re.sub('-', '_', re.sub('\s', '_', provider))
+    except (TypeError, ValueError):
         return provider
 
 
@@ -241,10 +241,10 @@ except AttributeError:
     maketrans = str.maketrans
     translate = str.translate
 
-_sp_repl_byte = b'_'
+_sp_repl_byte = '_'
 
 _sp_strict_allowed = string.ascii_letters + string.digits
-_sp_strict_removed = b''.join([chr(x) for x in range(0, 256) 
+_sp_strict_removed = ''.join([chr(x) for x in range(0, 256) 
                               if chr(x) not in _sp_strict_allowed])
 _sp_strict_transtable = maketrans(_sp_strict_removed,
                                   _sp_repl_byte * len(_sp_strict_removed))
@@ -253,8 +253,8 @@ _sp_strict_transtable = maketrans(_sp_strict_removed,
 # and not defined to be illegal
 _sp_lax_allowed = [chr(x) for x in range(33, 128) 
                    if chr(x) not in (_illegal_chars_ + '-')]
-_sp_lax_removed = b''.join([chr(x) for x in range(0, 256) 
-                            if chr(x) not in _sp_lax_allowed])
+_sp_lax_removed = ''.join([chr(x) for x in range(0, 256) 
+                           if chr(x) not in _sp_lax_allowed])
 _sp_lax_transtable = maketrans(_sp_lax_removed,
                                _sp_repl_byte * len(_sp_lax_removed))
 
@@ -284,6 +284,8 @@ def make_specific_safe(specific, strict=True):
     # encode
     if not isinstance(specific, bytes):
         specific = specific.encode('ascii', 'ignore')
+    if not isinstance(specific, six.string_types):
+        specific = specific.decode('utf-8')
 
     table = _sp_strict_transtable if strict else _sp_lax_transtable
     specific = translate(specific, table)
@@ -292,7 +294,10 @@ def make_specific_safe(specific, strict=True):
         raise ImpossibleToMakeSpecificPartSafe(specific)
 
     # back to unicode, coming from ascii
-    return specific.decode('ascii')
+    try:
+        return specific.decode('ascii')
+    except AttributeError:
+        return specific
 
 
 def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
@@ -346,6 +351,8 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
             provider = provider.encode('ascii', 'ignore')
         else:
             provider = str(provider)
+        if not isinstance(provider, six.string_types):
+            provider = provider.decode("utf-8")
         provider = escape_provider(provider) + '-'
     else:
         provider = (base_parts.provider + '-' if base_parts.provider else '')
