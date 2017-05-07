@@ -6,10 +6,12 @@ Support for using NTIIDs in a zope schema.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
+
+import six
 
 from nti.ntiids.ntiids import validate_ntiid_string
 
@@ -23,7 +25,7 @@ class ValidNTIID(ValidURI):
     value is actually reachable or accessibly in a library or catalog.)
     """
 
-    _type = unicode
+    _type = six.text_type
 
     def fromUnicode(self, value):
         # The very first thing the superclass does is turn
