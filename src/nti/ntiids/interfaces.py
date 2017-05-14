@@ -20,16 +20,12 @@ from zope.interface.interfaces import IObjectEvent
 
 try:
     from dolmen.builtins import ITuple
-    from dolmen.builtins import IIterable
 except (ImportError, NameError):
-    
-    class IIterable(interface.Interface):
-        """Base interface for iterable types"""
+
+    class ITuple(interface.Interface):
+        """Marker interface for tuples"""
         def __iter__():
             pass
-
-    class ITuple(IIterable):
-        """Marker interface for tuples"""
     interface.classImplements(tuple, ITuple)
 
 from nti.schema.field import TextLine
