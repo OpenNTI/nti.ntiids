@@ -18,17 +18,16 @@ from zope.interface.common.sequence import IMinimalSequence
 from zope.interface.interfaces import ObjectEvent
 from zope.interface.interfaces import IObjectEvent
 
-try:
-    from dolmen.builtins import ITuple
-except (ImportError, NameError):
-
-    class ITuple(interface.Interface):
-        """Marker interface for tuples"""
-        def __iter__():
-            pass
-    interface.classImplements(tuple, ITuple)
-
 from nti.schema.field import TextLine
+
+
+class ITuple(interface.Interface):
+    """
+    Marker interface for tuples
+    """
+    def __iter__():
+        pass
+interface.classImplements(tuple, ITuple)
 
 
 class INTIID(ITuple, IMinimalSequence):
