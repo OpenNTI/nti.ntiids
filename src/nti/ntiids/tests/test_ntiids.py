@@ -96,3 +96,8 @@ class TestNTIIDS(TestCase):
 
         assert_that(ntiids.make_provider_safe('NSF/[Science]Nation?'),
                     is_('NSF__Science_Nation_'))
+        
+    def test_hash_ntiid(self):
+        ntiid = 'tag:nextthought.com,2011-10:NTI-HTML-764853119912700730'
+        assert_that(ntiids.hash_ntiid(ntiid, '0000'),
+                    is_('tag:nextthought.com,2011-10:NTI-HTML-5C60CE517CB52C8631FCBA5F2FD3356CACEF712B2D7665508F2F6CE1712489A3_0055'))

@@ -15,6 +15,7 @@ import re
 import six
 import time
 import string
+import hashlib
 import numbers
 import datetime
 import warnings
@@ -441,3 +442,21 @@ def find_object_with_ntiid(key, **kwargs):
         return None
     result = resolver.resolve(key)
     return result
+
+
+def hexdigest(data, salt=None):
+    salt = salt or ''
+    hasher = hashlib.sha256()
+    hasher.update(data + salt)
+    return hasher.hexdigest()
+
+
+def hash_ntiid(ntiid, salt=None):
+    parts = get_parts(ntiid)
+    digest = hexdigest(ntiid, salt).upper()
+    specific = make_specific_safe(u"%s_%04d" % (digest, len(ntiid)))
+    ntiid = make_ntiid(parts.date,
+                       parts.provider,
+                       parts.nttype,
+                       specific=specific)
+    return ntiid
