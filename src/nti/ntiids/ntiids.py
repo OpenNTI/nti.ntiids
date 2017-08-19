@@ -6,7 +6,7 @@ Constants and types for dealing with our unique IDs.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -27,6 +27,9 @@ from zope import interface
 from zope.schema.interfaces import ValidationError
 
 from nti.ntiids import MessageFactory as _
+
+from nti.ntiids._compat import text_
+from nti.ntiids._compat import bytes_
 
 from nti.ntiids.interfaces import INTIID
 from nti.ntiids.interfaces import INTIIDResolver
@@ -203,13 +206,10 @@ def escape_provider(provider):
     comparing provider names with those that come fram an NTIID,
     you should always call this function.
 
-    :return: The escaped provider, or the original value if it could not be escaped.
+    :return: The escaped provider.
 
     """
-    try:
-        return provider.replace(' ', '_').replace('-', '_')
-    except AttributeError:
-        return provider
+    return text_(provider).replace(' ', '_').replace('-', '_')
 
 
 def make_provider_safe(provider):
@@ -219,7 +219,7 @@ def make_provider_safe(provider):
 
     .. caution:: This is not a reversible transformation.
     """
-    provider = re.sub(_illegal_chars_pattern, '_', provider)
+    provider = re.sub(_illegal_chars_pattern, '_', text_(provider))
     provider = escape_provider(provider)
     return provider
 
@@ -242,11 +242,13 @@ except AttributeError:
     maketrans = str.maketrans
     translate = str.translate
 
-_sp_repl_byte = b'_'
+_sp_repl_byte = '_'
 
 _sp_strict_allowed = string.ascii_letters + string.digits
-_sp_strict_removed = b''.join([chr(x) for x in range(0, 256) 
+
+_sp_strict_removed = ''.join([chr(x) for x in range(0, 256) 
                               if chr(x) not in _sp_strict_allowed])
+
 _sp_strict_transtable = maketrans(_sp_strict_removed,
                                   _sp_repl_byte * len(_sp_strict_removed))
 
@@ -254,8 +256,10 @@ _sp_strict_transtable = maketrans(_sp_strict_removed,
 # and not defined to be illegal
 _sp_lax_allowed = [chr(x) for x in range(33, 128) 
                    if chr(x) not in (_illegal_chars_ + '-')]
-_sp_lax_removed = b''.join([chr(x) for x in range(0, 256) 
-                            if chr(x) not in _sp_lax_allowed])
+
+_sp_lax_removed = ''.join(chr(x) for x in range(0, 256) 
+                          if chr(x) not in _sp_lax_allowed)
+
 _sp_lax_transtable = maketrans(_sp_lax_removed,
                                _sp_repl_byte * len(_sp_lax_removed))
 
@@ -284,8 +288,11 @@ def make_specific_safe(specific, strict=True):
     # Since we are is ascii-land here, easy way to strip all high-chars is to
     # encode
     if not isinstance(specific, bytes):
-        specific = specific.encode('ascii', 'ignore')
+        specific = bytes_(specific, 'ascii', 'ignore')
 
+    # back to unicode
+    specific = text_(specific)
+    
     table = _sp_strict_transtable if strict else _sp_lax_transtable
     specific = translate(specific, table)
 
@@ -293,7 +300,7 @@ def make_specific_safe(specific, strict=True):
         raise ImpossibleToMakeSpecificPartSafe(specific)
 
     # back to unicode, coming from ascii
-    return specific.decode('ascii')
+    return text_(specific, 'ascii')
 
 
 def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
@@ -347,14 +354,14 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
             provider = provider.encode('ascii', 'ignore')
         else:
             provider = str(provider)
-        provider = escape_provider(provider) + '-'
+        provider = escape_provider(provider) + u'-'
     else:
-        provider = (base_parts.provider + '-' if base_parts.provider else '')
+        provider = (base_parts.provider + u'-' if base_parts.provider else u'')
     
     if specific:
-        specific = '-' +  specific 
+        specific = u'-' +  specific 
     else:
-        specific = ('-' + base_parts.specific if base_parts.specific else '')
+        specific = (u'-' + base_parts.specific if base_parts.specific else u'')
     nttype = nttype or base_parts.nttype
 
     __traceback_info__ = (date_string, provider, nttype, specific)
@@ -445,7 +452,8 @@ def find_object_with_ntiid(key, **kwargs):
 
 
 def hexdigest(data, salt=None):
-    salt = salt or ''
+    data = bytes_(data)
+    salt = bytes_(salt or b'')
     hasher = hashlib.sha256()
     hasher.update(data + salt)
     return hasher.hexdigest()
