@@ -32,29 +32,29 @@ from nti.ntiids.interfaces import INTIID
 from nti.ntiids.interfaces import INTIIDResolver
 
 # Well-known IDs
-DATE = "2011-10"
+DATE = u"2011-10"
 
 #: prefix of NTIIDs
-TAG_NTC = 'tag:nextthought.com'
+TAG_NTC = u'tag:nextthought.com'
 
 #: When NTIIDs (usually of a particular type) are arranged into
 #: a tree, or a forest of trees, this NTIID specifies the conceptual
 #: root of the entire tree or forest.
-ROOT = "%s,%s:Root" % (TAG_NTC, DATE)
+ROOT = u"%s,%s:Root" % (TAG_NTC, DATE)
 
 #: Used as an opaque identifier to a specific object. This will
 #: not incorporate the object's name or path (when those concepts make
 #: sense). Instead, it points to an object by identity.
-TYPE_OID = 'OID'
+TYPE_OID = u'OID'
 
 #: Meant to specify some sort of unique but otherwise
 #: meaningless local portion. (Not necessarily an actual GUID).
-TYPE_UUID = 'UUID'
+TYPE_UUID = u'UUID'
 
 #: The intid type is not currently used. Instead,
 #: intid is included as a part of the OID, preventing
 #: access using a stale URL after an object is deleted
-TYPE_INTID = 'INTID'
+TYPE_INTID = u'INTID'
 
 #: Used as an opaque identifier to refer to an object that was
 #: once (weakly) referenced, but can no longer be found. Only the system
@@ -64,35 +64,35 @@ TYPE_INTID = 'INTID'
 #: the same missing NTIID; however, in some cases, it may be possible
 #: for references to different missing objects to produce the same missing
 #: NTIID. Context will usually make it clear if this has happened.
-TYPE_MISSING = 'Missing'
+TYPE_MISSING = u'Missing'
 
 #: Named entities are globally accessible knowing nothing
 #: more than a simple string name. There should be a defined
 #: subtype for each namespace and/or specific kind of
 #: named entity
-TYPE_NAMED_ENTITY = 'NamedEntity'
+TYPE_NAMED_ENTITY = u'NamedEntity'
 
 #: Subtype of named entities identifying a particular user account
-TYPE_NAMED_ENTITY_USER = TYPE_NAMED_ENTITY + ':User'
+TYPE_NAMED_ENTITY_USER = TYPE_NAMED_ENTITY + u':User'
 
 #: Subtype of named entities identifying a particular community
-TYPE_NAMED_ENTITY_COMMUNITY = TYPE_NAMED_ENTITY + ':Community'
+TYPE_NAMED_ENTITY_COMMUNITY = TYPE_NAMED_ENTITY + u':Community'
 
 #: AKA an extant "chat" session
-TYPE_ROOM = 'MeetingRoom'  
+TYPE_ROOM = u'MeetingRoom'  
 TYPE_MEETINGROOM = TYPE_ROOM
 
-TYPE_HTML = 'HTML'
-TYPE_QUIZ = 'Quiz'
+TYPE_HTML = u'HTML'
+TYPE_QUIZ = u'Quiz'
 
-TYPE_MEETINGROOM_GROUP = TYPE_ROOM + ':Group'
+TYPE_MEETINGROOM_GROUP = TYPE_ROOM + u':Group'
 
 #: Transcripts and TranscriptSummaries. Note that
 #: they are not subtypes of a common type because they
 #: contain quite different information and are used
 #: in different ways.
-TYPE_TRANSCRIPT = 'Transcript'
-TYPE_TRANSCRIPT_SUMMARY = 'TranscriptSummary'
+TYPE_TRANSCRIPT = u'Transcript'
+TYPE_TRANSCRIPT_SUMMARY = u'TranscriptSummary'
 
 # Validation
 # This is a minimal set, required to make parsing wark;
@@ -115,7 +115,7 @@ class ImpossibleToMakeSpecificPartSafe(InvalidNTIIDError):
     The supplied value cannot be used safely.
     """
 
-    i18n_message = _("The value you have used is not valid.")
+    i18n_message = _(u"The value you have used is not valid.")
 
 ImpossibleToMakeProviderPartSafe = ImpossibleToMakeSpecificPartSafe
 
@@ -358,7 +358,7 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
     nttype = nttype or base_parts.nttype
 
     __traceback_info__ = (date_string, provider, nttype, specific)
-    result = 'tag:nextthought.com,%s:%s%s%s' % __traceback_info__
+    result = u'tag:nextthought.com,%s:%s%s%s' % __traceback_info__
     validate_ntiid_string(result)
     return result
 
