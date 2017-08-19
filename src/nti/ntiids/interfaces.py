@@ -6,7 +6,7 @@ NTIID related interfaces.
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
+from __future__ import print_function, absolute_import, division
 __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
@@ -38,8 +38,11 @@ class INTIID(ITuple, IMinimalSequence):
     (provider, type, specific, date)
     """
     provider = TextLine(title=u"The username of the creating/providing entity.")
+
     nttype = TextLine(title=u"The type of the NTIID.")
+
     specific = TextLine(title=u"The type-specific portion of the NTIID.")
+
     date = TextLine(title=u"The date portion of the NTIID.")
 
 
