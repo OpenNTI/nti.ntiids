@@ -25,7 +25,7 @@ setup(
     description="NTI IDs",
     long_description=(_read('README.rst') + '\n\n' + _read('CHANGES.rst')),
     license='Apache',
-    keywords='ntiids',
+    keywords='ids',
     classifiers=[
         'Intended Audience :: Developers',
         'Natural Language :: English',

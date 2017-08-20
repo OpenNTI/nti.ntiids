@@ -246,8 +246,8 @@ _sp_repl_byte = '_'
 
 _sp_strict_allowed = string.ascii_letters + string.digits
 
-_sp_strict_removed = ''.join([chr(x) for x in range(0, 256) 
-                              if chr(x) not in _sp_strict_allowed])
+_sp_strict_removed = ''.join(chr(x) for x in range(0, 256) 
+                             if chr(x) not in _sp_strict_allowed)
 
 _sp_strict_transtable = maketrans(_sp_strict_removed,
                                   _sp_repl_byte * len(_sp_strict_removed))
@@ -354,14 +354,14 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
             provider = provider.encode('ascii', 'ignore')
         else:
             provider = str(provider)
-        provider = escape_provider(provider) + u'-'
+        provider = escape_provider(provider) + '-'
     else:
-        provider = (base_parts.provider + u'-' if base_parts.provider else u'')
+        provider = (base_parts.provider + '-' if base_parts.provider else '')
     
     if specific:
-        specific = u'-' +  specific 
+        specific = '-' +  specific 
     else:
-        specific = (u'-' + base_parts.specific if base_parts.specific else u'')
+        specific = ('-' + base_parts.specific if base_parts.specific else '')
     nttype = nttype or base_parts.nttype
 
     __traceback_info__ = (date_string, provider, nttype, specific)
@@ -370,7 +370,7 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
     return result
 
 NTIID = collections.namedtuple('NTIID',
-                               map(str, ['provider', 'nttype', 'specific', 'date']))
+                               ('provider', 'nttype', 'specific', 'date'))
 interface.classImplements(NTIID, INTIID)
 
 
