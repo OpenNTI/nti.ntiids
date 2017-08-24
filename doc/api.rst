@@ -3,7 +3,7 @@
 ===========
 
 Compat
-==========
+======
 
 .. automodule:: nti.ntiids._compat
 
@@ -12,17 +12,12 @@ Interfaces
 
 .. automodule:: nti.ntiids.interfaces
 
-Utilities
-=========
-
-.. automodule:: nti.ntiids
-
-IDS
-===========
+NTI IDS
+=======
 
 .. automodule:: nti.ntiids.ntiids
 
 Schema
-============
+======
 
 .. automodule:: nti.ntiids.schema
