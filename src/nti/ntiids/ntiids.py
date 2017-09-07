@@ -159,6 +159,8 @@ validate_ntiid_string(ROOT)
 
 
 def is_valid_ntiid_string(ntiid):
+    if not ntiid:
+        return False
     try:
         validate_ntiid_string(ntiid)
         return True
@@ -433,7 +435,8 @@ def find_object_with_ntiid(key, **kwargs):
             they are not currently used. If you send any, :mod:`warnings` will issue a warning.
     :return: The object found, or None if no object can be found or the ntiid passed is invalid.
     """
-
+    if not key:
+        return None
     if not is_valid_ntiid_string(key):
         logger.warn("Invalid ntiid string %s", key)
         return None
