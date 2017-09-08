@@ -105,8 +105,8 @@ html_static_path = ['_static']
 
 # -- Options for HTMLHelp output ------------------------------------------
 
-# Output file ntiids name for HTML help builder.
-htmlhelp_ntiidsname = 'ntintiidsdoc'
+# Output file base name for HTML help builder.
+htmlhelp_basename = 'ntintiidsdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
