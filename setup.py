@@ -38,6 +38,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
+    url="https://github.com/NextThought/nti.ntiids",
     zip_safe=True,
     packages=find_packages('src'),
     package_dir={'': 'src'},
