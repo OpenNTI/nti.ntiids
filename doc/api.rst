@@ -12,10 +12,15 @@ Interfaces
 
 .. automodule:: nti.ntiids.interfaces
 
-NTI IDS
+NTI IDs
 =======
 
 .. automodule:: nti.ntiids.ntiids
+
+OIDs
+====
+
+.. automodule:: nti.ntiids.oids
 
 Schema
 ======

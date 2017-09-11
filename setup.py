@@ -8,8 +8,8 @@ entry_points = {
 
 TESTS_REQUIRE = [
     'nti.testing',
-    'zope.testrunner',
     'zope.dottedname',
+    'zope.testrunner',
 ]
 
 
@@ -53,6 +53,7 @@ setup(
         'zope.interface',
         'zope.i18nmessageid',
         'zope.schema',
+        'zope.security',
     ],
     extras_require={
         'test': TESTS_REQUIRE,
