@@ -50,6 +50,7 @@ setup(
         'nti.schema',
         'six',
         'zope.component',
+        'zope.hookable',
         'zope.interface',
         'zope.i18nmessageid',
         'zope.schema',
