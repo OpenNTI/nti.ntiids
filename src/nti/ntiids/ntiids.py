@@ -301,7 +301,7 @@ def make_specific_safe(specific, strict=True):
     if not specific or set(specific) == set(_sp_repl_byte):
         raise ImpossibleToMakeSpecificPartSafe(specific)
 
-    # ensure to unicode after translate
+    # ensure unicode after translate
     return text_(specific)
 
 
