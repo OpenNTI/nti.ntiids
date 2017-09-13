@@ -301,8 +301,8 @@ def make_specific_safe(specific, strict=True):
     if not specific or set(specific) == set(_sp_repl_byte):
         raise ImpossibleToMakeSpecificPartSafe(specific)
 
-    # back to unicode, coming from ascii
-    return text_(specific, 'ascii')
+    # ensure to unicode after translate
+    return text_(specific)
 
 
 def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
