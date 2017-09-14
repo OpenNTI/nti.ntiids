@@ -35,4 +35,4 @@ class TestOIDs(unittest.TestCase):
         mock_teo.is_callable().with_args().returns('0x01:666f6f')
         ntiid = to_external_ntiid_oid(object())
         assert_that(ntiid,
-                    is_('tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6'))
+                    is_('tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f'))
