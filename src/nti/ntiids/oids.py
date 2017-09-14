@@ -15,13 +15,30 @@ from six import string_types
 
 from zope.security.management import system_user
 
+from nti.externalization.externalization import choose_field
+from nti.externalization.externalization import set_external_identifiers
+
+from nti.externalization.interfaces import StandardExternalFields
+from nti.externalization.interfaces import StandardInternalFields
+
 from nti.externalization.oids import toExternalOID
 
 from nti.externalization.proxy import removeAllProxies
 
 from nti.ntiids.ntiids import TYPE_OID
+from nti.ntiids.ntiids import InvalidNTIIDError
+
 from nti.ntiids.ntiids import make_ntiid
+from nti.ntiids.ntiids import is_ntiid_of_type
 from nti.ntiids.ntiids import make_provider_safe
+from nti.ntiids.ntiids import is_valid_ntiid_string
+
+StandardExternalFields_ID = StandardExternalFields.ID
+StandardExternalFields_OID = StandardExternalFields.OID
+StandardExternalFields_NTIID = StandardExternalFields.NTIID
+
+StandardInternalFields_ID = StandardInternalFields.ID
+StandardInternalFields_NTIID = StandardInternalFields.NTIID
 
 MASKED_EXTERNAL_CREATOR = 'unknown'
 DEFAULT_EXTERNAL_CREATOR = system_user.id
@@ -90,3 +107,46 @@ def to_external_ntiid_oid(contained, default_oid=None,
     except (AttributeError, TypeError):  # TypeError is a BrokenModified
         pass
     return ext_oid
+
+
+def setExternalIdentifiers(context, result):
+    result_id = choose_field(result, context, StandardExternalFields_ID,
+                             fields=(StandardInternalFields_ID, StandardExternalFields_ID))
+    # As we transition over to structured IDs that contain OIDs,
+    # we'll try to use that for both the ID and OID portions
+    if is_ntiid_of_type(result_id, TYPE_OID):
+        # If we are trying to use OIDs as IDs, it's possible that the
+        # ids are in the old, version 1 format, without an intid component.
+        # If that's the case, then update them on the fly, but only for notes
+        # because odd things happen to other  objects (chat rooms?)
+        # if we do this to them
+        if context.__class__.__name__ == 'Note':
+            result_id = result[StandardExternalFields_ID]
+            std_oid = to_external_ntiid_oid(context)
+            if std_oid and std_oid.startswith(result_id):
+                result[StandardExternalFields_ID] = std_oid
+        oid = result[StandardExternalFields_OID] = result[StandardExternalFields_ID]
+    else:
+        oid = to_external_ntiid_oid(context, default_oid=None)
+        if oid:
+            result[StandardExternalFields_OID] = oid
+
+    ntiid = oid
+    try:
+        choose_field(result, context, StandardExternalFields_NTIID,
+                     fields=(StandardInternalFields_NTIID, StandardExternalFields_NTIID))
+        # During the transition, if there is not an NTIID, but we can find one as the ID or OID,
+        # provide that
+        if StandardExternalFields_NTIID not in result:
+            for field in (StandardExternalFields_ID, StandardExternalFields_OID):
+                if is_valid_ntiid_string(result.get(field)):
+                    ntiid = result[StandardExternalFields_NTIID] = result[field]
+                    break
+    except InvalidNTIIDError:
+        # printing self probably wants to externalize
+        logger.exception("Failed to get NTIID for object %s", type(context))
+    return (oid, ntiid)
+
+
+def set_hookable():
+    set_external_identifiers.sethook(setExternalIdentifiers)

@@ -11,3 +11,8 @@ logger = __import__('logging').getLogger(__name__)
 
 import zope.i18nmessageid
 MessageFactory = zope.i18nmessageid.MessageFactory('nti.ntiids')
+
+# Set the correct OID hookable function
+from nti.ntiids.oids import set_hookable
+set_hookable()
+del set_hookable
