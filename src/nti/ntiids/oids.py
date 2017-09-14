@@ -148,5 +148,5 @@ def setExternalIdentifiers(context, result):
     return (oid, ntiid)
 
 
-def set_hookable():
+def set_hook():
     set_external_identifiers.sethook(setExternalIdentifiers)
