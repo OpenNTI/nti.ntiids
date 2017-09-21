@@ -1,0 +1,2 @@
+-e git+https://github.com/NextThought/nti.base.git@master#egg=nti.base
+-e git+https://github.com/NextThought/nti.externalization.git@master#egg=nti.externalization
