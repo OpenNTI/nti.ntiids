@@ -6,10 +6,9 @@ Constants and types for dealing with our unique IDs.
 .. $Id$
 """
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
-
-logger = __import__('logging').getLogger(__name__)
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 import re
 import six
@@ -105,6 +104,8 @@ TYPE_TRANSCRIPT_SUMMARY = u'TranscriptSummary'
 # wind up as filenames, and that would break many filename uses
 _illegal_chars_ = r"/\";=?<>#%'{}|^[]"
 _illegal_chars_pattern = r"[/\";=?<>#%'{}|^\[\]]"
+
+logger = __import__('logging').getLogger(__name__)
 
 
 class InvalidNTIIDError(ValidationError):
