@@ -439,7 +439,7 @@ def find_object_with_ntiid(key, **kwargs):
     if not key:
         return None
     if not is_valid_ntiid_string(key):
-        logger.warn("Invalid ntiid string %s", key)
+        logger.debug("Invalid ntiid string %s", key)
         return None
     if kwargs:
         warnings.warn("Function currently takes no kwargs")
@@ -448,8 +448,8 @@ def find_object_with_ntiid(key, **kwargs):
     resolver = component.queryUtility(INTIIDResolver, name=ntiid.nttype)
     if not resolver:
         if ntiid.nttype != TYPE_UUID:
-            logger.warn("No ntiid resolver for '%s' in '%s'", 
-                        ntiid.nttype, key)
+            logger.debug("No ntiid resolver for '%s' in '%s'", 
+                         ntiid.nttype, key)
         return None
     result = resolver.resolve(key)
     return result
