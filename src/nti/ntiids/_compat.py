@@ -13,11 +13,15 @@ from six import text_type
 
 def text_(s, encoding='utf-8', err='strict'):
     """
-    Decode a byte sequence and unicode result
+    Return a string and unicode version of an object. 
+    If the object is an byte sequence it's decoded first
+    
+    :param object s: The object to get an unicode representation of.
+    :param str encoding: The encoding to be used if ``s`` is a byte sequence
+    :param str err: The err handling scheme to be used if ``s`` is a byte sequence
     """
-    if not isinstance(s, text_type) and s is not None:
-        s = s.decode(encoding, err)
-    return s
+    s = s.decode(encoding, err) if isinstance(s, bytes) else s
+    return text_type(s) if s is not None else None
 
 
 def bytes_(s, encoding='utf-8', errors='strict'):
