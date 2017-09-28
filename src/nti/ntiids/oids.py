@@ -15,7 +15,8 @@ from six import string_types
 from zope.security.management import system_user
 
 from nti.externalization.externalization import choose_field
-from nti.externalization.externalization import set_external_identifiers
+
+from nti.externalization.extension_points import set_external_identifiers
 
 from nti.externalization.interfaces import StandardExternalFields
 from nti.externalization.interfaces import StandardInternalFields
@@ -150,4 +151,5 @@ def setExternalIdentifiers(context, result):
 
 
 def set_hook():
-    set_external_identifiers.sethook(setExternalIdentifiers)
+    hook = getattr(set_external_identifiers, 'sethook')
+    hook(setExternalIdentifiers)
