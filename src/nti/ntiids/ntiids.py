@@ -25,10 +25,10 @@ from zope import interface
 
 from zope.schema.interfaces import ValidationError
 
-from nti.externalization._compat import bytes_
-from nti.externalization._compat import to_unicode as text_
-
 from nti.ntiids import MessageFactory as _
+
+from nti.ntiids._compat import text_
+from nti.ntiids._compat import bytes_
 
 from nti.ntiids.interfaces import INTIID
 from nti.ntiids.interfaces import INTIIDResolver
