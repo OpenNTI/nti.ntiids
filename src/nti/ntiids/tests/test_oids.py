@@ -10,6 +10,7 @@ from __future__ import absolute_import
 
 from hamcrest import is_
 from hamcrest import assert_that
+from hamcrest import has_entries
 from hamcrest import has_property
 
 import fudge
@@ -37,3 +38,28 @@ class TestOIDs(unittest.TestCase):
         ntiid = to_external_ntiid_oid(object())
         assert_that(ntiid,
                     is_('tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f'))
+        
+    @fudge.patch('nti.ntiids.oids.toExternalOID')
+    def test_set_external_identifiers(self, mock_teo):
+        mock_teo.is_callable().with_args().returns('0x01:666f6f')
+
+        class Context(object):
+            id = 'my-id'
+        context = Context()
+        result = dict()
+        setExternalIdentifiers(context, result)
+        assert_that(result, 
+                    has_entries('NTIID', 'tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f',
+                                'OID', 'tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f',
+                                'ID', 'my-id'))
+        
+        class Note(object):
+            id = 'tag:nextthought.com,2011-10:system-OID-0x01:666f6f'
+        context = Note()
+        result = dict()
+        mock_teo.is_callable().with_args().returns('0x01:666f6f')
+        setExternalIdentifiers(context, result)
+        assert_that(result, 
+                    has_entries('NTIID', 'tag:nextthought.com,2011-10:system-OID-0x01:666f6f',
+                                'OID', 'tag:nextthought.com,2011-10:system-OID-0x01:666f6f',
+                                'ID', 'tag:nextthought.com,2011-10:system-OID-0x01:666f6f'))
