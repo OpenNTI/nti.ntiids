@@ -22,7 +22,9 @@ class ITuple(interface.Interface):
     Marker interface for tuples
     """
     def __iter__():
-        pass
+        """
+        return an iterable of the items in the tuple
+        """
 interface.classImplements(tuple, ITuple)
 
 
