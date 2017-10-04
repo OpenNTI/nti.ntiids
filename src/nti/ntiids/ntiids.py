@@ -124,7 +124,7 @@ class ImpossibleToMakeSpecificPartSafe(InvalidNTIIDError):
 ImpossibleToMakeProviderPartSafe = ImpossibleToMakeSpecificPartSafe
 
 
-def validate_ntiid_string(ntiid):
+def validate_ntiid_string(ntiid, encoding='utf-8'):
     """
     Ensures the string is a valid NTIID, else raises :class:`InvalidNTIIDError`.
 
@@ -133,10 +133,10 @@ def validate_ntiid_string(ntiid):
     __traceback_info__ = ntiid,
     try:
         # cannot decode unicode
-        ntiid = ntiid if isinstance(ntiid, six.text_type) else ntiid.decode('utf-8')
+        ntiid = ntiid if isinstance(ntiid, six.text_type) else ntiid.decode(encoding)
     except (AttributeError, TypeError):
         raise InvalidNTIIDError("Not a string " + repr(ntiid))
-    except (UnicodeDecodeError,):
+    except (UnicodeDecodeError):
         raise InvalidNTIIDError("String contains non-utf-8 values " + 
                                 repr(ntiid))
 
@@ -155,7 +155,6 @@ def validate_ntiid_string(ntiid):
         if char in ntiid:
             raise InvalidNTIIDError('Contains illegal char ' + repr(char))
     return ntiid
-
 validate_ntiid_string(ROOT)
 
 
@@ -238,12 +237,8 @@ def make_provider_safe(provider):
 # with no punctuation. There are some unicode characters that are dangerous
 # and used in attacks on certain platforms (not to mention being confusing)
 
-try:
-    maketrans = string.maketrans
-    translate = string.translate
-except AttributeError:
-    maketrans = str.maketrans
-    translate = str.translate
+maketrans = getattr(string, 'maketrans', None) or getattr(str, 'maketrans')
+translate = getattr(string, 'translate', None) or getattr(str, 'translate')
 
 _sp_repl_byte = '_'
 
@@ -345,7 +340,7 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
         date = datetime.date(*time.gmtime(date_seconds)[0:3])
         date_string = date.isoformat()
 
-    if date_string is None:
+    if not date_string:
         __traceback_info__ = date, base
         raise ValueError("Unable to derive date string")
 

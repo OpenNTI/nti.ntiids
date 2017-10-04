@@ -26,7 +26,6 @@ from nti.externalization.oids import toExternalOID
 from nti.externalization.proxy import removeAllProxies
 
 from nti.ntiids.ntiids import TYPE_OID
-from nti.ntiids.ntiids import InvalidNTIIDError
 
 from nti.ntiids.ntiids import make_ntiid
 from nti.ntiids.ntiids import is_ntiid_of_type
@@ -134,19 +133,15 @@ def setExternalIdentifiers(context, result):
             result[StandardExternalFields_OID] = oid
 
     ntiid = oid
-    try:
-        choose_field(result, context, StandardExternalFields_NTIID,
-                     fields=(StandardInternalFields_NTIID, StandardExternalFields_NTIID))
-        # During the transition, if there is not an NTIID, but we can find one as the ID or OID,
-        # provide that
-        if StandardExternalFields_NTIID not in result:
-            for field in (StandardExternalFields_ID, StandardExternalFields_OID):
-                if is_valid_ntiid_string(result.get(field)):
-                    ntiid = result[StandardExternalFields_NTIID] = result[field]
-                    break
-    except InvalidNTIIDError:
-        # printing self probably wants to externalize
-        logger.exception("Failed to get NTIID for object %s", type(context))
+    choose_field(result, context, StandardExternalFields_NTIID,
+                 fields=(StandardInternalFields_NTIID, StandardExternalFields_NTIID))
+    # During the transition, if there is not an NTIID, but we can find one as the ID or OID,
+    # provide that
+    if StandardExternalFields_NTIID not in result:
+        for field in (StandardExternalFields_ID, StandardExternalFields_OID):
+            if is_valid_ntiid_string(result.get(field)):
+                ntiid = result[StandardExternalFields_NTIID] = result[field]
+                break
     return (oid, ntiid)
 
 

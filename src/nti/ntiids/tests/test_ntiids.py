@@ -18,6 +18,7 @@ from hamcrest import has_property
 
 from nti.testing.matchers import verifiably_provides
 
+import six
 import time
 import datetime
 from unittest import TestCase
@@ -33,8 +34,11 @@ from nti.ntiids.ntiids import ROOT
 from nti.ntiids.ntiids import get_parts
 from nti.ntiids.ntiids import hash_ntiid
 from nti.ntiids.ntiids import make_ntiid
+from nti.ntiids.ntiids import get_provider
+from nti.ntiids.ntiids import get_specific
 from nti.ntiids.ntiids import make_provider_safe
 from nti.ntiids.ntiids import make_specific_safe
+from nti.ntiids.ntiids import is_valid_ntiid_string
 from nti.ntiids.ntiids import validate_ntiid_string
 from nti.ntiids.ntiids import find_object_with_ntiid
 
@@ -52,7 +56,16 @@ class TestNTIIDS(TestCase):
         self.assertRaises(ValueError, make_ntiid)
         self.assertRaises(ValueError,
                           make_ntiid,
+                          base=u'invalid')
+        self.assertRaises(ValueError,
+                          make_ntiid,
                           provider=u'foo',
+                          specific=u'baz')
+
+        self.assertRaises(ValueError,
+                          make_ntiid,
+                          date='',
+                          nttype=u'Test',
                           specific=u'baz')
         iso_now = datetime.date(*time.gmtime()[:3]).isoformat()
 
@@ -74,9 +87,24 @@ class TestNTIIDS(TestCase):
                                specific=u'Bar'),
                     is_('tag:nextthought.com,%s:Henry_Beach_Needham_._McClures_Magazine-Test-Bar' % iso_now))
 
+        assert_that(make_ntiid(base=u'tag:nextthought.com,2011-10:NTI-HTML-foo',
+                               nttype=u'XML'),
+                    is_('tag:nextthought.com,2011-10:NTI-XML-foo'))
+
+        assert_that(make_ntiid(base=u'tag:nextthought.com,2011-10:NTI-HTML-foo',
+                               nttype=u'XML',
+                               provider=1,),
+                    is_('tag:nextthought.com,2011-10:1-XML-foo'))
+
     def test_parse_ntiid(self):
         ntiid = get_parts(ROOT)
         assert_that(ntiid, verifiably_provides(INTIID))
+
+        ntiid = get_parts(u'mystrįng')
+        assert_that(ntiid, has_property('provider', is_(none())))
+        assert_that(ntiid, has_property('nttype', is_(none())))
+        assert_that(ntiid, has_property('specific', is_(none())))
+        assert_that(ntiid, has_property('date',  is_(none())))
 
         ntiid = u'tag:nextthought.com,2011-10:Foo-Bar-With:Many:Colons'
         validate_ntiid_string(ntiid)
@@ -86,8 +114,38 @@ class TestNTIIDS(TestCase):
         assert_that(ntiid, has_property('nttype', 'Bar'))
         assert_that(ntiid, has_property('specific', 'With:Many:Colons'))
 
+        ntiid = get_parts(u'tag:nextthought.com,20:Foo-Bar')
+        assert_that(ntiid, has_property('provider', is_(none())))
+        assert_that(ntiid, has_property('nttype', 'Foo'))
+        assert_that(ntiid, has_property('specific', 'Bar'))
+        assert_that(ntiid, has_property('date', '20'))
+
         with self.assertRaises(InvalidNTIIDError):
-            validate_ntiid_string(u'my ünicôdé strįng')
+            validate_ntiid_string(u'mystrįng')
+
+        if six.PY2:
+            with self.assertRaises(InvalidNTIIDError):
+                validate_ntiid_string(b'いちご', 'ascii')
+
+        with self.assertRaises(InvalidNTIIDError):
+            validate_ntiid_string(u'tag:nextthought.com,20')
+
+        with self.assertRaises(InvalidNTIIDError):
+            validate_ntiid_string(u'tag:nextthought.com,20:NTI-HTML-764-85-31-19910')
+
+        with self.assertRaises(InvalidNTIIDError):
+            validate_ntiid_string(u'tag:nextthought.com,20:NTI-HTML-????')
+
+    def test_is_valid_ntiid_string(self):
+        assert_that(is_valid_ntiid_string(None), is_(False))
+
+    def test_get_provider(self):
+        assert_that(get_provider('tag:nextthought.com,2011-10:NTI-HTML-764853119912700730'),
+                    is_('NTI'))
+
+    def test_get_specific(self):
+        assert_that(get_specific('tag:nextthought.com,2011-10:NTI-HTML-764853119912700730'),
+                    is_('764853119912700730'))
 
     def test_utc_date(self):
         #"A timestamp should always be interpreted UTC."
@@ -150,5 +208,5 @@ class TestNTIIDS(TestCase):
             obj = find_object_with_ntiid(ntiid)
             assert_that(obj, is_not(none()))
         finally:
-            component.getGlobalSiteManager().unregisterUtility(resolver, 
+            component.getGlobalSiteManager().unregisterUtility(resolver,
                                                                INTIIDResolver, 'HTML')
