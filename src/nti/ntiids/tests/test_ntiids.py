@@ -18,6 +18,7 @@ from hamcrest import has_property
 
 from nti.testing.matchers import verifiably_provides
 
+import six
 import time
 import datetime
 from unittest import TestCase
@@ -122,8 +123,9 @@ class TestNTIIDS(TestCase):
         with self.assertRaises(InvalidNTIIDError):
             validate_ntiid_string(u'mystrįng')
 
-        with self.assertRaises(InvalidNTIIDError):
-            validate_ntiid_string(b'ボールト', 'ascii')
+        if six.PY2:
+            with self.assertRaises(InvalidNTIIDError):
+                validate_ntiid_string(b'いちご', 'ascii')
 
         with self.assertRaises(InvalidNTIIDError):
             validate_ntiid_string(u'tag:nextthought.com,20')
