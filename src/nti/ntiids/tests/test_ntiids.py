@@ -125,7 +125,7 @@ class TestNTIIDS(TestCase):
 
         if six.PY2:
             with self.assertRaises(InvalidNTIIDError):
-                validate_ntiid_string(b'いちご', 'ascii')
+                validate_ntiid_string('いちご', 'ascii')
 
         with self.assertRaises(InvalidNTIIDError):
             validate_ntiid_string(u'tag:nextthought.com,20')
