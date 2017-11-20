@@ -20,6 +20,8 @@ import datetime
 import warnings
 import collections
 
+import repoze.lru
+
 from zope import component
 from zope import interface
 
@@ -158,6 +160,7 @@ def validate_ntiid_string(ntiid, encoding='utf-8'):
 validate_ntiid_string(ROOT)
 
 
+@repoze.lru.lru_cache(1000)
 def is_valid_ntiid_string(ntiid):
     if not ntiid:
         return False
@@ -252,8 +255,10 @@ _sp_strict_transtable = maketrans(_sp_strict_removed,
 
 # lax allows all non-control characters that are non-whitespace printable
 # and not defined to be illegal
-_sp_lax_allowed = [chr(x) for x in range(33, 128) 
-                   if chr(x) not in (_illegal_chars_ + '-')]
+_sp_lax_allowed = [
+    chr(x) for x in range(33, 128) 
+    if chr(x) not in (_illegal_chars_ + '-')
+]
 
 _sp_lax_removed = ''.join(chr(x) for x in range(0, 256) 
                           if chr(x) not in _sp_lax_allowed)
@@ -434,7 +439,8 @@ def find_object_with_ntiid(key, **kwargs):
     if not key:
         return None
     if not is_valid_ntiid_string(key):
-        logger.debug("Invalid ntiid string %s", key)
+        # ZODB.loglevels TRACE level
+        logger.log(5, "Invalid ntiid string %s", key)
         return None
     if kwargs:
         warnings.warn("Function currently takes no kwargs")
