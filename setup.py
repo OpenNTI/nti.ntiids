@@ -50,6 +50,7 @@ setup(
         'setuptools',
         'nti.externalization',
         'nti.schema',
+        'repoze.lru',
         'six',
         'zope.component',
         'zope.hookable',
