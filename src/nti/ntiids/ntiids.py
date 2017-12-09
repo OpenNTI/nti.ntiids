@@ -132,6 +132,7 @@ def validate_ntiid_string(ntiid, encoding='utf-8'):
 
     :return: The `string`.
     """
+    # pylint: disable=unused-variable
     __traceback_info__ = ntiid,
     try:
         # cannot decode unicode
@@ -228,7 +229,7 @@ def make_provider_safe(provider):
     provider = escape_provider(provider)
     return provider
 
-# TODO: A function to "escape" the local/specific part. Unfortunately, it's
+# A function to "escape" the local/specific part. Unfortunately, it's
 # non-reversible so its less an escape and more a permutation.
 # NOTE: While string.translate is tempting,
 # it cannot be used because we allow the local parts to be Unicode and string.translate
@@ -351,7 +352,7 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
 
     base_parts = get_parts(base)
 
-    # TODO: This is not a reversible transformation. Who should do this?
+    # This is not a reversible transformation. Who should do this?
     if provider:
         if isinstance(provider, six.string_types):
             provider = provider.encode('ascii', 'ignore')

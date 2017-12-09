@@ -62,7 +62,7 @@ def to_external_ntiid_oid(contained, default_oid=None,
     :keyword bool mask_creator: If true (not the default), then the actual
             creator of the object will not be present in the NTIID string.
     """
-
+    # pylint: disable=unused-variable
     __traceback_info__ = type(contained)
 
     if callable(getattr(contained, 'to_external_ntiid_oid', None)):
