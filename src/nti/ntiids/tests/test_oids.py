@@ -16,7 +16,7 @@ from hamcrest import has_property
 import fudge
 import unittest
 
-from nti.externalization.externalization import set_external_identifiers
+from nti.externalization.extension_points import set_external_identifiers
 
 from nti.ntiids.oids import to_external_ntiid_oid
 from nti.ntiids.oids import setExternalIdentifiers
