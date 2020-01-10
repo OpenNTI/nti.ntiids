@@ -80,6 +80,9 @@ class TestNTIIDS(TestCase):
         assert_that(make_ntiid(date=None, nttype=u'Test', provider=u'TestP', specific=u'Bar'),
                     is_('tag:nextthought.com,%s:TestP-Test-Bar' % iso_now))
 
+        assert_that(make_ntiid(date=None, nttype=u'Test', provider=u'TestP', specific=b'0000'),
+                    is_('tag:nextthought.com,%s:TestP-Test-0000' % iso_now))
+
         assert_that(make_ntiid(date=None,
                                nttype=u'Test',
                                provider=u'Henry Beach Needham . McClure\u2019s Magazine',
