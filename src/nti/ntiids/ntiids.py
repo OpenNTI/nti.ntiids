@@ -83,7 +83,7 @@ TYPE_NAMED_ENTITY_USER = TYPE_NAMED_ENTITY + u':User'
 TYPE_NAMED_ENTITY_COMMUNITY = TYPE_NAMED_ENTITY + u':Community'
 
 #: AKA an extant "chat" session
-TYPE_ROOM = u'MeetingRoom'  
+TYPE_ROOM = u'MeetingRoom'
 TYPE_MEETINGROOM = TYPE_ROOM
 
 TYPE_HTML = u'HTML'
@@ -140,7 +140,7 @@ def validate_ntiid_string(ntiid, encoding='utf-8'):
     except (AttributeError, TypeError):
         raise InvalidNTIIDError("Not a string " + repr(ntiid))
     except (UnicodeDecodeError):
-        raise InvalidNTIIDError("String contains non-utf-8 values " + 
+        raise InvalidNTIIDError("String contains non-utf-8 values " +
                                 repr(ntiid))
 
     if not ntiid or not ntiid.startswith('tag:nextthought.com,20'):
@@ -248,7 +248,7 @@ _sp_repl_byte = '_'
 
 _sp_strict_allowed = string.ascii_letters + string.digits
 
-_sp_strict_removed = ''.join(chr(x) for x in range(0, 256) 
+_sp_strict_removed = ''.join(chr(x) for x in range(0, 256)
                              if chr(x) not in _sp_strict_allowed)
 
 _sp_strict_transtable = maketrans(_sp_strict_removed,
@@ -257,11 +257,11 @@ _sp_strict_transtable = maketrans(_sp_strict_removed,
 # lax allows all non-control characters that are non-whitespace printable
 # and not defined to be illegal
 _sp_lax_allowed = [
-    chr(x) for x in range(33, 128) 
+    chr(x) for x in range(33, 128)
     if chr(x) not in (_illegal_chars_ + '-')
 ]
 
-_sp_lax_removed = ''.join(chr(x) for x in range(0, 256) 
+_sp_lax_removed = ''.join(chr(x) for x in range(0, 256)
                           if chr(x) not in _sp_lax_allowed)
 
 _sp_lax_transtable = maketrans(_sp_lax_removed,
@@ -296,7 +296,7 @@ def make_specific_safe(specific, strict=True):
 
     # back to unicode
     specific = text_(specific)
-    
+
     table = _sp_strict_transtable if strict else _sp_lax_transtable
     specific = translate(specific, table)
 
@@ -358,14 +358,14 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
             provider = provider.encode('ascii', 'ignore')
         else:
             provider = str(provider)
-        provider = escape_provider(provider) + '-'
+        provider = escape_provider(provider) + u'-'
     else:
         provider = (base_parts.provider + '-' if base_parts.provider else '')
-    
+
     if specific:
-        specific = '-' +  specific 
+        specific = u'-' +  text_(specific)
     else:
-        specific = ('-' + base_parts.specific if base_parts.specific else '')
+        specific = (u'-' + base_parts.specific if base_parts.specific else u'')
     nttype = nttype or base_parts.nttype
 
     __traceback_info__ = (date_string, provider, nttype, specific)
@@ -450,7 +450,7 @@ def find_object_with_ntiid(key, **kwargs):
     resolver = component.queryUtility(INTIIDResolver, name=ntiid.nttype)
     if not resolver:
         if ntiid.nttype != TYPE_UUID:
-            logger.debug("No ntiid resolver for '%s' in '%s'", 
+            logger.debug("No ntiid resolver for '%s' in '%s'",
                          ntiid.nttype, key)
         return None
     result = resolver.resolve(key)
