@@ -3,7 +3,6 @@
 """
 Functions for externalizing OIDs.
 
-.. $Id$
 """
 
 from __future__ import division

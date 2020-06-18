@@ -1,31 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-.. $Id$
+Interfaces relating to NTIIDs.
 """
 
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-# pylint: disable=inherit-non-class
+# pylint: disable=inherit-non-class, no-self-argument, no-method-argument
 
 from zope import interface
 
 from zope.interface.common.sequence import IMinimalSequence
+from zope.interface.common.builtins import ITuple
 
 from nti.schema.field import TextLine
 
-
-class ITuple(interface.Interface):
-    """
-    Marker interface for tuples
-    """
-    def __iter__():
-        """
-        return an iterable of the items in the tuple
-        """
-interface.classImplements(tuple, ITuple)
+assert ITuple.implementedBy(tuple)
 
 
 class INTIID(ITuple, IMinimalSequence):
@@ -33,7 +25,10 @@ class INTIID(ITuple, IMinimalSequence):
     Represents the parts of an NTIID that has been parsed.
 
     In addition to the named fields, this object acts as a 4-tuple,
-    (provider, type, specific, date)
+    (provider, type, specific, date).
+
+    Note that NTIID components are text (unicode), and ntiid strings are also
+    unicode.
     """
     provider = TextLine(title=u"The username of the creating/providing entity.")
 

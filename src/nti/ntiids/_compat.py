@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-.. $Id$
+Cross-version and cross-implementation compatibility helpers.
 """
 
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from six import text_type
+text_type = unicode if str is bytes else str # pylint:disable=undefined-variable
+string_types = (basestring,) if str is bytes else (str,) # pylint:disable=undefined-variable
 
 
 def text_(s, encoding='utf-8', err='strict'):
     """
-    Return a string and unicode version of an object. 
-    If the object is an byte sequence it's decoded first
-    
+    Return a unicode version of an object.
+    If the object is a byte sequence it's decoded first
+
     :param object s: The object to get an unicode representation of.
     :param str encoding: The encoding to be used if ``s`` is a byte sequence
     :param str err: The err handling scheme to be used if ``s`` is a byte sequence

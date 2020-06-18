@@ -11,6 +11,7 @@ TESTS_REQUIRE = [
     'nti.testing',
     'zope.dottedname',
     'zope.testrunner',
+    'coverage',
 ]
 
 
@@ -21,10 +22,10 @@ def _read(fname):
 
 setup(
     name='nti.ntiids',
-    version=_read('version.txt').strip(),
+    version='0.0.1.dev0',
     author='Jason Madden',
     author_email='jason@nextthought.com',
-    description="NTI IDs",
+    description="Semantic tag: URIs for objects, including resolution",
     long_description=(_read('README.rst') + '\n\n' + _read('CHANGES.rst')),
     license='Apache',
     keywords='ids',
@@ -32,10 +33,14 @@ setup(
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Operating System :: OS Independent',
+        'Framework :: Zope3',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
@@ -47,15 +52,14 @@ setup(
     namespace_packages=['nti'],
     tests_require=TESTS_REQUIRE,
     install_requires=[
-        'setuptools',
         'nti.externalization',
         'nti.schema',
         'repoze.lru',
-        'six',
+        'setuptools',
         'zope.component',
         'zope.hookable',
-        'zope.interface',
         'zope.i18nmessageid',
+        'zope.interface',
         'zope.schema',
         'zope.security',
     ],

@@ -3,15 +3,13 @@
 """
 Support for using NTIIDs in a zope schema.
 
-.. $Id$
 """
 
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import six
-
+from nti.ntiids._compat import text_type
 from nti.ntiids.ntiids import validate_ntiid_string
 
 from nti.schema.field import ValidURI
@@ -24,7 +22,7 @@ class ValidNTIID(ValidURI):
     value is actually reachable or accessibly in a library or catalog.)
     """
 
-    _type = six.text_type
+    _type = text_type
 
     def fromUnicode(self, value):
         # The very first thing the superclass does is turn

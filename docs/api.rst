@@ -1,28 +1,23 @@
-===========
- Reference
-===========
+===============
+ API Reference
+===============
 
-Compat
-======
-
-.. automodule:: nti.ntiids._compat
-
-Interfaces
-==========
+nti.ntiids.interfaces
+=====================
 
 .. automodule:: nti.ntiids.interfaces
 
-NTI IDs
-=======
+nti.ntiids.ntiids
+=================
 
 .. automodule:: nti.ntiids.ntiids
 
-OIDs
-====
+nti.ntiids.oids
+===============
 
 .. automodule:: nti.ntiids.oids
 
-Schema
-======
+nti.ntiids.schema
+=================
 
 .. automodule:: nti.ntiids.schema

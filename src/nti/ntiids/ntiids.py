@@ -3,7 +3,6 @@
 """
 Constants and types for dealing with our unique IDs.
 
-.. $Id$
 """
 
 from __future__ import division
@@ -11,7 +10,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import re
-import six
 import time
 import string
 import hashlib
@@ -19,6 +17,7 @@ import numbers
 import datetime
 import warnings
 import collections
+
 
 import repoze.lru
 
@@ -28,12 +27,14 @@ from zope import interface
 from zope.schema.interfaces import ValidationError
 
 from nti.ntiids import MessageFactory as _
+from nti.ntiids.interfaces import INTIID
+from nti.ntiids.interfaces import INTIIDResolver
 
+from nti.ntiids._compat import text_type
+from nti.ntiids._compat import string_types
 from nti.ntiids._compat import text_
 from nti.ntiids._compat import bytes_
 
-from nti.ntiids.interfaces import INTIID
-from nti.ntiids.interfaces import INTIIDResolver
 
 # Well-known IDs
 DATE = u"2011-10"
@@ -104,8 +105,8 @@ TYPE_TRANSCRIPT_SUMMARY = u'TranscriptSummary'
 # Note specifically that neither path
 # delimiter (forward or backward slash) is allowed as ntiids often
 # wind up as filenames, and that would break many filename uses
-_illegal_chars_ = r"/\";=?<>#%'{}|^[]"
-_illegal_chars_pattern = r"[/\";=?<>#%'{}|^\[\]]"
+_illegal_chars_ = text_type(r"/\";=?<>#%'{}|^[]")
+_illegal_chars_pattern = text_type(r"[/\";=?<>#%'{}|^\[\]]")
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -130,16 +131,15 @@ def validate_ntiid_string(ntiid, encoding='utf-8'):
     """
     Ensures the string is a valid NTIID, else raises :class:`InvalidNTIIDError`.
 
-    :return: The `string`.
+    :return: The *ntiid*, after validation and ensuring that it is
+      text.
     """
-    # pylint: disable=unused-variable
-    __traceback_info__ = ntiid,
     try:
         # cannot decode unicode
-        ntiid = ntiid if isinstance(ntiid, six.text_type) else ntiid.decode(encoding)
+        ntiid = ntiid if isinstance(ntiid, text_type) else ntiid.decode(encoding)
     except (AttributeError, TypeError):
         raise InvalidNTIIDError("Not a string " + repr(ntiid))
-    except (UnicodeDecodeError):
+    except UnicodeDecodeError:
         raise InvalidNTIIDError("String contains non-utf-8 values " +
                                 repr(ntiid))
 
@@ -147,11 +147,11 @@ def validate_ntiid_string(ntiid, encoding='utf-8'):
         raise InvalidNTIIDError('Missing correct start value: ' + repr(ntiid))
 
     # Split twice. Allow for : in the specific part
-    parts = ntiid.split(':', 2)
+    parts = ntiid.split(u':', 2)
     if len(parts) != 3:
         raise InvalidNTIIDError('Wrong number of colons: ' + ntiid)
 
-    if len(parts[2].split('-')) > 3:
+    if len(parts[2].split(u'-')) > 3:
         raise InvalidNTIIDError('Wrong number of dashes: ' + ntiid)
 
     for char in _illegal_chars_:
@@ -164,10 +164,9 @@ validate_ntiid_string(ROOT)
 @repoze.lru.lru_cache(1000)
 def is_valid_ntiid_string(ntiid):
     if not ntiid:
-        return False
+        return ntiid
     try:
-        validate_ntiid_string(ntiid)
-        return True
+        return validate_ntiid_string(ntiid)
     except InvalidNTIIDError:
         return False
 
@@ -199,7 +198,7 @@ def is_ntiid_of_types(ntiid, nttypes):
 
     the_type = get_type(ntiid)
     if the_type:  # strip subtypes
-        the_type = the_type.split(':', 2)[0]
+        the_type = the_type.split(u':', 2)[0]
         if the_type in nttypes:
             return the_type
     return None
@@ -209,13 +208,13 @@ def escape_provider(provider):
     """
     Makes a provider name safe for use in an NTIID by escaping
     characters not safe for a URL, such as _ and ' '. When
-    comparing provider names with those that come fram an NTIID,
+    comparing provider names with those that come from an NTIID,
     you should always call this function.
 
     :return: The escaped provider.
 
     """
-    return text_(provider).replace(' ', '_').replace('-', '_')
+    return text_(provider).replace(u' ', u'_').replace(u'-', u'_')
 
 
 def make_provider_safe(provider):
@@ -225,7 +224,7 @@ def make_provider_safe(provider):
 
     .. caution:: This is not a reversible transformation.
     """
-    provider = re.sub(_illegal_chars_pattern, '_', text_(provider))
+    provider = re.sub(_illegal_chars_pattern, u'_', text_(provider))
     provider = escape_provider(provider)
     return provider
 
@@ -306,12 +305,14 @@ def make_specific_safe(specific, strict=True):
     # ensure unicode after translate
     return text_(specific)
 
+_strings_or_bytes = string_types + (bytes,)
 
 def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
     """
     Create a new NTIID.
 
-    :param number date: A value from :meth:`time.time`. If missing (0 or `None`), today will be used.
+    :param number date: A value from :meth:`time.time`. If missing (0 or `None`),
+           today will be used.
            If a string, then that string should be a portion of an ISO format date, e.g., 2011-10.
     :param str provider: Optional provider name. We will sanitize it for our format.
     :param str nttype: Required NTIID type (if no base is given)
@@ -321,9 +322,9 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
 
     :return: A new NTIID string formatted as of the given date.
     """
-
-    if base is not None and not is_valid_ntiid_string(base):
-        base = None
+    # TODO: Simplify
+    # pylint:disable=too-many-branches
+    base = base if is_valid_ntiid_string(base) else None
 
     if not nttype and not base:
         raise ValueError('Must supply type')
@@ -331,7 +332,7 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
     date_string = None
     if date is DATE and base is not None:
         date_string = get_parts(base).date
-    elif isinstance(date, six.string_types):
+    elif isinstance(date, string_types):
         date_string = date
     else:
         # Account for 0/None
@@ -354,13 +355,18 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
 
     # This is not a reversible transformation. Who should do this?
     if provider:
-        if isinstance(provider, six.string_types):
-            provider = provider.encode('ascii', 'ignore')
-        else:
-            provider = str(provider)
+        if not isinstance(provider, _strings_or_bytes):
+            provider = text_type(provider)
+
+        if isinstance(provider, bytes):
+            # May have high-bytes; strip them.
+            provider = provider.decode('ascii', 'ignore')
+        elif isinstance(provider, text_type):
+            # Strip high bytes
+            provider = provider.encode('ascii', 'ignore').decode('ascii')
         provider = escape_provider(provider) + u'-'
     else:
-        provider = (base_parts.provider + '-' if base_parts.provider else '')
+        provider = (base_parts.provider + u'-' if base_parts.provider else u'')
 
     if specific:
         specific = u'-' +  text_(specific)
@@ -370,8 +376,7 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
 
     __traceback_info__ = (date_string, provider, nttype, specific)
     result = u'tag:nextthought.com,%s:%s%s%s' % __traceback_info__
-    validate_ntiid_string(result)
-    return result
+    return validate_ntiid_string(result)
 
 NTIID = collections.namedtuple('NTIID',
                                ('provider', 'nttype', 'specific', 'date'))
@@ -383,7 +388,7 @@ def _parse(ntiid):
     :return: 4-tuple (provider, type, specific, date)
     """
     try:
-        validate_ntiid_string(ntiid)
+        ntiid = validate_ntiid_string(ntiid)
         _, tag_part, our_parts = ntiid.split(':', 2)
         date = tag_part.split(',')[-1]
         our_parts = our_parts.split('-')
@@ -421,8 +426,9 @@ def get_specific(ntiid):
 
 def get_parts(ntiid):
     """
-    :return: An NTIID named four-tuple (provider, type, type-specific, date) if the ntiid could be parsed,
-            or named four-tuple of None.
+    :return: An NTIID named four-tuple (provider, type, type-specific,
+        date) if the ntiid could be parsed, or named four-tuple of
+        None.
     """
     return _parse(ntiid)
 

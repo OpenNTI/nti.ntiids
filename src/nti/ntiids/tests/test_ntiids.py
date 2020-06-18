@@ -7,6 +7,11 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods
 
+import time
+import datetime
+from unittest import TestCase
+
+
 from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
@@ -15,15 +20,13 @@ from hamcrest import calling
 from hamcrest import assert_that
 from hamcrest import has_property
 
-from nti.testing.matchers import verifiably_provides
-
 import six
-import time
-import datetime
-from unittest import TestCase
 
 from zope import component
 from zope import interface
+
+from nti.testing.matchers import verifiably_provides
+from nti.testing.matchers import is_false
 
 from nti.ntiids.interfaces import INTIID
 from nti.ntiids.interfaces import INTIIDResolver
@@ -50,6 +53,10 @@ from nti.ntiids.tests import SharedConfiguringTestLayer
 class TestNTIIDS(TestCase):
 
     layer = SharedConfiguringTestLayer
+
+    def test_make_ntiid_bytes_provider(self):
+        ntiid = make_ntiid(provider=b'abc', nttype=u'TYPE')
+        self.assertEqual(ntiid, 'tag:nextthought.com,2011-10:abc-TYPE')
 
     def test_make_ntiid(self):
         self.assertRaises(ValueError, make_ntiid)
@@ -83,11 +90,13 @@ class TestNTIIDS(TestCase):
         assert_that(make_ntiid(date=None, nttype=u'Test', provider=u'TestP', specific=b'0000'),
                     is_('tag:nextthought.com,%s:TestP-Test-0000' % iso_now))
 
-        assert_that(make_ntiid(date=None,
-                               nttype=u'Test',
-                               provider=u'Henry Beach Needham . McClure\u2019s Magazine',
-                               specific=u'Bar'),
-                    is_('tag:nextthought.com,%s:Henry_Beach_Needham_._McClures_Magazine-Test-Bar' % iso_now))
+        assert_that(
+            make_ntiid(date=None,
+                       nttype=u'Test',
+                       provider=u'Henry Beach Needham . McClure\u2019s Magazine',
+                       specific=u'Bar'),
+            is_('tag:nextthought.com,%s'
+                ':Henry_Beach_Needham_._McClures_Magazine-Test-Bar' % iso_now))
 
         assert_that(make_ntiid(base=u'tag:nextthought.com,2011-10:NTI-HTML-foo',
                                nttype=u'XML'),
@@ -106,7 +115,7 @@ class TestNTIIDS(TestCase):
         assert_that(ntiid, has_property('provider', is_(none())))
         assert_that(ntiid, has_property('nttype', is_(none())))
         assert_that(ntiid, has_property('specific', is_(none())))
-        assert_that(ntiid, has_property('date',  is_(none())))
+        assert_that(ntiid, has_property('date', is_(none())))
 
         ntiid = u'tag:nextthought.com,2011-10:Foo-Bar-With:Many:Colons'
         validate_ntiid_string(ntiid)
@@ -139,7 +148,7 @@ class TestNTIIDS(TestCase):
             validate_ntiid_string(u'tag:nextthought.com,20:NTI-HTML-????')
 
     def test_is_valid_ntiid_string(self):
-        assert_that(is_valid_ntiid_string(None), is_(False))
+        assert_that(is_valid_ntiid_string(None), is_false())
 
     def test_get_provider(self):
         assert_that(get_provider('tag:nextthought.com,2011-10:NTI-HTML-764853119912700730'),
@@ -183,8 +192,10 @@ class TestNTIIDS(TestCase):
 
     def test_hash_ntiid(self):
         ntiid = u'tag:nextthought.com,2011-10:NTI-HTML-764853119912700730'
-        assert_that(hash_ntiid(ntiid, '0000'),
-                    is_('tag:nextthought.com,2011-10:NTI-HTML-5C60CE517CB52C8631FCBA5F2FD3356CACEF712B2D7665508F2F6CE1712489A3_0055'))
+        assert_that(
+            hash_ntiid(ntiid, '0000'),
+            is_('tag:nextthought.com,2011-10:'
+                'NTI-HTML-5C60CE517CB52C8631FCBA5F2FD3356CACEF712B2D7665508F2F6CE1712489A3_0055'))
 
     def test_find_object_with_ntiid(self):
         assert_that(find_object_with_ntiid(None), is_(none()))
