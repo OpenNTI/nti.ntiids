@@ -22,7 +22,7 @@ def _read(fname):
 
 setup(
     name='nti.ntiids',
-    version='0.0.1.dev0',
+    version='0.0.1',
     author='Jason Madden',
     author_email='jason@nextthought.com',
     description="Semantic tag: URIs for objects, including resolution",
