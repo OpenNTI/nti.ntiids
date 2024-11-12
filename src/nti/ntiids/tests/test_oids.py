@@ -13,8 +13,8 @@ from hamcrest import assert_that
 from hamcrest import has_entries
 from hamcrest import has_property
 
-import fudge
 import unittest
+from unittest.mock import patch as Patch
 
 from nti.externalization.extension_points import set_external_identifiers
 
@@ -32,12 +32,13 @@ class TestOIDs(unittest.TestCase):
         assert_that(set_external_identifiers,
                     has_property('implementation', is_(setExternalIdentifiers)))
 
-    @fudge.patch('nti.ntiids.oids.toExternalOID')
+    @Patch('nti.ntiids.oids.toExternalOID', autospec=True)
     def test_to_external_ntiid_oid(self, mock_teo):
-        mock_teo.is_callable().with_args().returns('0x01:666f6f')
+        mock_teo.return_value = '0x01:666f6f'
         ntiid = to_external_ntiid_oid(object())
-        assert_that(ntiid,
-                    is_('tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f'))
+        assert_that(
+            ntiid,
+            is_('tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f'))
 
         class O(object):
             creator = 'aizen'
@@ -60,31 +61,32 @@ class TestOIDs(unittest.TestCase):
         assert_that(ntiid,
                     is_('tag:nextthought.com,2011-10:ichigo-OID-0x01:666f6f'))
 
-        mock_teo.is_callable().with_args().returns(None)
+        mock_teo.return_value = None
         ntiid = to_external_ntiid_oid(object())
         assert_that(ntiid, is_(none()))
 
-    @fudge.patch('nti.ntiids.oids.toExternalOID')
+    @Patch('nti.ntiids.oids.toExternalOID', autospec=True)
     def test_set_external_identifiers(self, mock_teo):
-        mock_teo.is_callable().with_args().returns('0x01:666f6f')
+        mock_teo.return_value = '0x01:666f6f'
 
         class Context(object):
             id = 'my-id'
         context = Context()
         result = dict()
         setExternalIdentifiers(context, result)
-        assert_that(result,
-                    has_entries('NTIID', 'tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f',
-                                'OID', 'tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f',
-                                'ID', 'my-id'))
+        assert_that(result, has_entries(
+            NTIID=('tag:nextthought.com,'
+                   '2011-10:zope.security.management.system_user-OID-0x01:666f6f'),
+            OID='tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f',
+            ID='my-id'))
 
         ntiid = 'tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f'
 
         class Note(object):
             id = ntiid
-        context = Note()
+        context = Note() # pylint:disable=redefined-variable-type
         result = dict(ID=ntiid)
-        mock_teo.is_callable().with_args().returns('0x01:666f6f')
+        mock_teo.return_value = '0x01:666f6f'
         setExternalIdentifiers(context, result)
         assert_that(result,
                     has_entries('NTIID', ntiid,
@@ -101,9 +103,10 @@ class TestOIDs(unittest.TestCase):
                     is_('tag:nextthought.com,2011-10:system_user-OID-0x02:666f6f'))
 
     def test_volatile(self):
+        expected = 'tag:nextthought.com,2011-10:system_user-OID-0x03:777f6f'
         class O(object):
-            _v_to_external_ntiid_oid_False = 'tag:nextthought.com,2011-10:system_user-OID-0x03:777f6f'
+            _v_to_external_ntiid_oid_False = expected
 
         ntiid = to_external_ntiid_oid(O())
         assert_that(ntiid,
-                    is_('tag:nextthought.com,2011-10:system_user-OID-0x03:777f6f'))
+                    is_(expected))

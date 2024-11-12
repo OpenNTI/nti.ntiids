@@ -8,7 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-# pylint: disable=inherit-non-class, no-self-argument, no-method-argument
+# pylint:disable=inherit-non-class, no-self-argument, no-method-argument
+# pylint:disable=too-many-ancestors
 
 from zope import interface
 
@@ -30,13 +31,13 @@ class INTIID(ITuple, IMinimalSequence):
     Note that NTIID components are text (unicode), and ntiid strings are also
     unicode.
     """
-    provider = TextLine(title=u"The username of the creating/providing entity.")
+    provider = TextLine(title="The username of the creating/providing entity.")
 
-    nttype = TextLine(title=u"The type of the NTIID.")
+    nttype = TextLine(title="The type of the NTIID.")
 
-    specific = TextLine(title=u"The type-specific portion of the NTIID.")
+    specific = TextLine(title="The type-specific portion of the NTIID.")
 
-    date = TextLine(title=u"The date portion of the NTIID.")
+    date = TextLine(title="The date portion of the NTIID.")
 
 
 class INTIIDResolver(interface.Interface):

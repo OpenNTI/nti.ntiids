@@ -23,6 +23,6 @@ class TestCommon(unittest.TestCase):
     layer = SharedConfiguringTestLayer
 
     def test_generate_ntiid(self):
-        ntiid = generate_ntiid(u'FOO', now=datetime.utcfromtimestamp(1000))
+        ntiid = generate_ntiid('FOO', now=datetime.utcfromtimestamp(1000))
         assert_that(ntiid,
                     starts_with('tag:nextthought.com,2011-10:NTI-FOO-system_19700101001640_000000'))

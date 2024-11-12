@@ -173,17 +173,26 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {
-    'https://docs.python.org/': None,
-    'https://persistent.readthedocs.io/en/latest': None,
-    'https://zopeinterface.readthedocs.io/en/latest': None,
+intersphinx_mapping =  {
+    'component': ('https://zopecomponent.readthedocs.io/en/latest/', None),
+    'container': ('https://zopecontainer.readthedocs.io/en/latest/', None,),
+    'i18n': ('https://zopei18nmessageid.readthedocs.io/en/latest/', None),
+    'interface': ('https://zopeinterface.readthedocs.io/en/latest/', None),
+    'persistent': ('https://persistent.readthedocs.io/en/latest', None),
+    'python': ('https://docs.python.org/', None),
+    'schema': ('https://zopeschema.readthedocs.io/en/latest/', None),
+    'site': ('https://zopesite.readthedocs.io/en/latest/', None,),
+    'testing': ('https://ntitesting.readthedocs.io/en/latest/', None),
+    'traversing': ('https://zopetraversing.readthedocs.io/en/latest/', None),
+    'zodb': ('http://www.zodb.org/en/latest/', None),
+    'external': ('https://ntiexternalization.readthedocs.io/en/latest/', None),
 }
 
 extlinks = {
     'issue': ('https://github.com/NextThought/nti.ntiids/issues/%s',
-              'issue #'),
+              'issue #%s'),
     'pr': ('https://github.com/NextThought/nti.ntiids/pull/%s',
-           'pull request #')}
+           'pull request #%s')}
 
 # Sphinx 1.8+ prefers this to `autodoc_default_flags`. It's documented that
 # either True or None mean the same thing as just setting the flag, but

@@ -5,10 +5,6 @@ Functions for externalizing OIDs.
 
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
 from six import string_types
 
 from zope.security.management import system_user
@@ -61,7 +57,7 @@ def to_external_ntiid_oid(contained, default_oid=None,
     :keyword bool mask_creator: If true (not the default), then the actual
             creator of the object will not be present in the NTIID string.
     """
-    # pylint: disable=unused-variable
+    # pylint: disable=unused-variable,too-many-positional-arguments
     __traceback_info__ = type(contained)
 
     if callable(getattr(contained, 'to_external_ntiid_oid', None)):
