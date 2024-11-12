@@ -24,9 +24,9 @@ import repoze.lru
 from zope import component
 from zope import interface
 
+import zope.i18nmessageid
 from zope.schema.interfaces import ValidationError
 
-from nti.ntiids import MessageFactory as _
 from nti.ntiids.interfaces import INTIID
 from nti.ntiids.interfaces import INTIIDResolver
 
@@ -35,31 +35,33 @@ from nti.ntiids._compat import string_types
 from nti.ntiids._compat import text_
 from nti.ntiids._compat import bytes_
 
+MessageFactory = zope.i18nmessageid.MessageFactory('nti.ntiids')
+_ = MessageFactory
 
 # Well-known IDs
-DATE = u"2011-10"
+DATE = "2011-10"
 
 #: prefix of NTIIDs
-TAG_NTC = u'tag:nextthought.com'
+TAG_NTC = 'tag:nextthought.com'
 
 #: When NTIIDs (usually of a particular type) are arranged into
 #: a tree, or a forest of trees, this NTIID specifies the conceptual
 #: root of the entire tree or forest.
-ROOT = u"%s,%s:Root" % (TAG_NTC, DATE)
+ROOT = "%s,%s:Root" % (TAG_NTC, DATE)
 
 #: Used as an opaque identifier to a specific object. This will
 #: not incorporate the object's name or path (when those concepts make
 #: sense). Instead, it points to an object by identity.
-TYPE_OID = u'OID'
+TYPE_OID = 'OID'
 
 #: Meant to specify some sort of unique but otherwise
 #: meaningless local portion. (Not necessarily an actual GUID).
-TYPE_UUID = u'UUID'
+TYPE_UUID = 'UUID'
 
 #: The intid type is not currently used. Instead,
 #: intid is included as a part of the OID, preventing
 #: access using a stale URL after an object is deleted
-TYPE_INTID = u'INTID'
+TYPE_INTID = 'INTID'
 
 #: Used as an opaque identifier to refer to an object that was
 #: once (weakly) referenced, but can no longer be found. Only the system
@@ -69,35 +71,35 @@ TYPE_INTID = u'INTID'
 #: the same missing NTIID; however, in some cases, it may be possible
 #: for references to different missing objects to produce the same missing
 #: NTIID. Context will usually make it clear if this has happened.
-TYPE_MISSING = u'Missing'
+TYPE_MISSING = 'Missing'
 
 #: Named entities are globally accessible knowing nothing
 #: more than a simple string name. There should be a defined
 #: subtype for each namespace and/or specific kind of
 #: named entity
-TYPE_NAMED_ENTITY = u'NamedEntity'
+TYPE_NAMED_ENTITY = 'NamedEntity'
 
 #: Subtype of named entities identifying a particular user account
-TYPE_NAMED_ENTITY_USER = TYPE_NAMED_ENTITY + u':User'
+TYPE_NAMED_ENTITY_USER = TYPE_NAMED_ENTITY + ':User'
 
 #: Subtype of named entities identifying a particular community
-TYPE_NAMED_ENTITY_COMMUNITY = TYPE_NAMED_ENTITY + u':Community'
+TYPE_NAMED_ENTITY_COMMUNITY = TYPE_NAMED_ENTITY + ':Community'
 
 #: AKA an extant "chat" session
-TYPE_ROOM = u'MeetingRoom'
+TYPE_ROOM = 'MeetingRoom'
 TYPE_MEETINGROOM = TYPE_ROOM
 
-TYPE_HTML = u'HTML'
-TYPE_QUIZ = u'Quiz'
+TYPE_HTML = 'HTML'
+TYPE_QUIZ = 'Quiz'
 
-TYPE_MEETINGROOM_GROUP = TYPE_ROOM + u':Group'
+TYPE_MEETINGROOM_GROUP = TYPE_ROOM + ':Group'
 
 #: Transcripts and TranscriptSummaries. Note that
 #: they are not subtypes of a common type because they
 #: contain quite different information and are used
 #: in different ways.
-TYPE_TRANSCRIPT = u'Transcript'
-TYPE_TRANSCRIPT_SUMMARY = u'TranscriptSummary'
+TYPE_TRANSCRIPT = 'Transcript'
+TYPE_TRANSCRIPT_SUMMARY = 'TranscriptSummary'
 
 # Validation
 # This is a minimal set, required to make parsing wark;
@@ -122,7 +124,7 @@ class ImpossibleToMakeSpecificPartSafe(InvalidNTIIDError):
     The supplied value cannot be used safely.
     """
 
-    i18n_message = _(u"The value you have used is not valid.")
+    i18n_message = _("The value you have used is not valid.")
 
 ImpossibleToMakeProviderPartSafe = ImpossibleToMakeSpecificPartSafe
 
@@ -137,21 +139,21 @@ def validate_ntiid_string(ntiid, encoding='utf-8'):
     try:
         # cannot decode unicode
         ntiid = ntiid if isinstance(ntiid, text_type) else ntiid.decode(encoding)
-    except (AttributeError, TypeError):
-        raise InvalidNTIIDError("Not a string " + repr(ntiid))
-    except UnicodeDecodeError:
+    except (AttributeError, TypeError) as e:
+        raise InvalidNTIIDError("Not a string " + repr(ntiid)) from e
+    except UnicodeDecodeError as e:
         raise InvalidNTIIDError("String contains non-utf-8 values " +
-                                repr(ntiid))
+                                repr(ntiid)) from e
 
     if not ntiid or not ntiid.startswith('tag:nextthought.com,20'):
         raise InvalidNTIIDError('Missing correct start value: ' + repr(ntiid))
 
     # Split twice. Allow for : in the specific part
-    parts = ntiid.split(u':', 2)
+    parts = ntiid.split(':', 2)
     if len(parts) != 3:
         raise InvalidNTIIDError('Wrong number of colons: ' + ntiid)
 
-    if len(parts[2].split(u'-')) > 3:
+    if len(parts[2].split('-')) > 3:
         raise InvalidNTIIDError('Wrong number of dashes: ' + ntiid)
 
     for char in _illegal_chars_:
@@ -198,7 +200,7 @@ def is_ntiid_of_types(ntiid, nttypes):
 
     the_type = get_type(ntiid)
     if the_type:  # strip subtypes
-        the_type = the_type.split(u':', 2)[0]
+        the_type = the_type.split(':', 2)[0]
         if the_type in nttypes:
             return the_type
     return None
@@ -214,7 +216,7 @@ def escape_provider(provider):
     :return: The escaped provider.
 
     """
-    return text_(provider).replace(u' ', u'_').replace(u'-', u'_')
+    return text_(provider).replace(' ', '_').replace('-', '_')
 
 
 def make_provider_safe(provider):
@@ -224,7 +226,7 @@ def make_provider_safe(provider):
 
     .. caution:: This is not a reversible transformation.
     """
-    provider = re.sub(_illegal_chars_pattern, u'_', text_(provider))
+    provider = re.sub(_illegal_chars_pattern, '_', text_(provider))
     provider = escape_provider(provider)
     return provider
 
@@ -364,18 +366,18 @@ def make_ntiid(date=DATE, provider=None, nttype=None, specific=None, base=None):
         elif isinstance(provider, text_type):
             # Strip high bytes
             provider = provider.encode('ascii', 'ignore').decode('ascii')
-        provider = escape_provider(provider) + u'-'
+        provider = escape_provider(provider) + '-'
     else:
-        provider = (base_parts.provider + u'-' if base_parts.provider else u'')
+        provider = (base_parts.provider + '-' if base_parts.provider else '')
 
     if specific:
-        specific = u'-' +  text_(specific)
+        specific = '-' +  text_(specific)
     else:
-        specific = (u'-' + base_parts.specific if base_parts.specific else u'')
+        specific = ('-' + base_parts.specific if base_parts.specific else '')
     nttype = nttype or base_parts.nttype
 
     __traceback_info__ = (date_string, provider, nttype, specific)
-    result = u'tag:nextthought.com,%s:%s%s%s' % __traceback_info__
+    result = 'tag:nextthought.com,%s:%s%s%s' % __traceback_info__
     return validate_ntiid_string(result)
 
 NTIID = collections.namedtuple('NTIID',
@@ -474,7 +476,7 @@ def hexdigest(data, salt=None):
 def hash_ntiid(ntiid, salt=None):
     parts = get_parts(ntiid)
     digest = hexdigest(ntiid, salt).upper()
-    specific = make_specific_safe(u"%s_%04d" % (digest, len(ntiid)))
+    specific = make_specific_safe("%s_%04d" % (digest, len(ntiid)))
     ntiid = make_ntiid(parts.date,
                        parts.provider,
                        parts.nttype,

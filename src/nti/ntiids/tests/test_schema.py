@@ -21,7 +21,8 @@ class TestSchema(unittest.TestCase):
     layer = SharedConfiguringTestLayer
 
     def test_schema(self):
+        nti = 'tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f'
         schema = ValidNTIID()
-        schema.fromUnicode(u'tag:nextthought.com,2011-10:zope.security.management.system_user-OID-0x01:666f6f')        
+        schema.fromUnicode(nti)
         with self.assertRaises(InvalidURI):
-            schema.fromUnicode(u'xx')
+            schema.fromUnicode('xx')

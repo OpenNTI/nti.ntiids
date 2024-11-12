@@ -14,6 +14,7 @@ from nti.ntiids.ntiids import validate_ntiid_string
 
 from nti.schema.field import ValidURI
 
+# pylint:disable=too-many-ancestors
 
 class ValidNTIID(ValidURI):
     """
@@ -33,5 +34,5 @@ class ValidNTIID(ValidURI):
         return value
 
     def _validate(self, value):
-        super(ValidNTIID, self)._validate(value)
+        super()._validate(value)
         validate_ntiid_string(value)

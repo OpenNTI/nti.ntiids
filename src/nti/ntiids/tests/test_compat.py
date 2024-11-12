@@ -21,5 +21,5 @@ from nti.ntiids._compat import bytes_
 class TestCompat(unittest.TestCase):
 
     def test_bytes(self):
-        assert_that(bytes_(u'\u2019'), is_(b'\xe2\x80\x99'))
-        assert_that(text_(b'\xe2\x80\x99'), is_(u'\u2019'))
+        assert_that(bytes_('\u2019'), is_(b'\xe2\x80\x99'))
+        assert_that(text_(b'\xe2\x80\x99'), is_('\u2019'))
