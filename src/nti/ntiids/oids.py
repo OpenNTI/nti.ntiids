@@ -5,8 +5,6 @@ Functions for externalizing OIDs.
 
 """
 
-from six import string_types
-
 from zope.security.management import system_user
 
 from nti.externalization.externalization import choose_field
@@ -92,7 +90,7 @@ def to_external_ntiid_oid(contained, default_oid=None,
     else:
         creator = getattr(contained, 'creator', DEFAULT_EXTERNAL_CREATOR)
 
-    if not isinstance(creator, string_types):
+    if not isinstance(creator, str):
         creator = getattr(creator, 'username', DEFAULT_EXTERNAL_CREATOR)
 
     ext_oid = make_ntiid(provider=make_provider_safe(creator),

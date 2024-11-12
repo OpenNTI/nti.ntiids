@@ -20,8 +20,6 @@ from hamcrest import calling
 from hamcrest import assert_that
 from hamcrest import has_property
 
-import six
-
 from zope import component
 from zope import interface
 
@@ -133,10 +131,6 @@ class TestNTIIDS(TestCase):
 
         with self.assertRaises(InvalidNTIIDError):
             validate_ntiid_string('mystrįng')
-
-        if six.PY2:
-            with self.assertRaises(InvalidNTIIDError):
-                validate_ntiid_string('いちご', 'ascii')
 
         with self.assertRaises(InvalidNTIIDError):
             validate_ntiid_string('tag:nextthought.com,20')
