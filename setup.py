@@ -45,7 +45,6 @@ setup(
         'Programming Language :: Python :: 3.14',
         'Programming Language :: Python :: 3.15',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy',
     ],
     url="https://github.com/OpenNTI/nti.ntiids",
     zip_safe=True,

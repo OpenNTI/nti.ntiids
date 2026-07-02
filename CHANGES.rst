@@ -7,6 +7,7 @@
 ==================
 
 - Add support for Python 3.14 and 3.15.
+- Drop support for PyPy.
 
 
 1.0.0 (2024-11-12)
